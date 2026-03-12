@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SITD Team Rota Manager</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface-alt: #f8f9fb;
+    --border: #e2e5ea;
+    --border-light: #eef0f3;
+    --text: #1a1d23;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-light: #dbeafe;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.08);
+    --transition: 150ms ease;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 48px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-left h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .header-left p {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  /* ── WEEK NAV ── */
+  .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 6px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .week-nav button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 16px;
+    transition: all var(--transition);
+  }
+
+  .week-nav button:hover { background: var(--surface-alt); color: var(--text); }
+
+  .week-nav .week-label {
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 220px;
+    text-align: center;
+    user-select: none;
+  }
+
+  .week-nav .today-btn {
+    width: auto;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .week-nav .today-btn:hover { background: var(--accent-light); }
+
+  /* ── ROTA TABLE ── */
+  .rota-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .rota-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .rota-table th, .rota-table td {
+    padding: 0;
+    text-align: center;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 13px;
+  }
+
+  .rota-table thead th {
+    background: var(--surface-alt);
+    padding: 10px 8px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rota-table thead th:first-child {
+    text-align: left;
+    padding-left: 16px;
+    width: 120px;
+  }
+
+  .rota-table thead th .day-name { display: block; font-weight: 600; }
+
+  .rota-table thead th .day-date {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .rota-table thead th .day-blocked {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    color: #b91c1c;
+    margin-top: 2px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .rota-table tbody tr:last-child td { border-bottom: none; }
+
+  .rota-table .name-cell {
+    text-align: left;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    background: var(--surface);
+    border-right: 1px solid var(--border-light);
+  }
+
+  .rota-table .status-cell {
+    padding: 4px;
+    position: relative;
+    height: 44px;
+  }
+
+  /* ── STATUS BUTTONS ── */
+  .status-btn {
+    width: 100%;
+    height: 100%;
+    min-height: 36px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .status-btn:hover {
+    filter: brightness(0.95);
+    border-color: rgba(0,0,0,0.1);
+  }
+
+  .status-btn.empty {
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    border: 2px dashed var(--border);
+  }
+
+  .status-btn.empty:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .status-btn.blocked {
+    cursor: not-allowed;
+    opacity: 0.85;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.04) 3px,
+      rgba(0,0,0,0.04) 6px
+    );
+  }
+
+  .status-btn.blocked:hover {
+    filter: none;
+    border-color: transparent;
+  }
+
+  /* ── DROPDOWN ── */
+  .dropdown-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 99;
+  }
+
+  .dropdown-overlay.open { display: block; }
+
+  .dropdown {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 4px;
+    min-width: 200px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .dropdown.open { display: block; }
+
+  .dropdown-section {
+    padding: 4px 8px 2px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .dropdown-section:first-child { margin-top: 0; }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background var(--transition);
+  }
+
+  .dropdown-item:hover { background: var(--surface-alt); }
+
+  .dropdown-item .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .dropdown-item.clear-item {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 4px 0;
+  }
+
+  .dropdown .custom-input-row {
+    display: flex;
+    gap: 4px;
+    padding: 4px 4px;
+  }
+
+  .dropdown .custom-input-row input {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    outline: none;
+  }
+
+  .dropdown .custom-input-row input:focus { border-color: var(--accent); }
+
+  .dropdown .custom-input-row button {
+    padding: 6px 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── ACTION BAR ── */
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text);
+    transition: all var(--transition);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: #fff;
+  }
+
+  .btn svg { width: 15px; height: 15px; }
+
+  /* ── SUMMARY PANEL ── */
+  .summary-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--surface-alt);
+  }
+
+  .summary-header h2 { font-size: 14px; font-weight: 700; }
+
+  .summary-body { padding: 12px 16px; }
+
+  .summary-intro { margin-bottom: 12px; }
+
+  .summary-intro textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 40px;
+    outline: none;
+    color: var(--text);
+  }
+
+  .summary-intro textarea:focus { border-color: var(--accent); }
+
+  .summary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .summary-item:last-child { border-bottom: none; }
+
+  .summary-item .person-name {
+    font-weight: 600;
+    font-size: 13px;
+    min-width: 70px;
+    padding-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .summary-item textarea {
+    flex: 1;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    padding: 5px 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    resize: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    min-height: 30px;
+  }
+
+  .summary-item textarea:hover { border-color: var(--border); }
+  .summary-item textarea:focus { border-color: var(--accent); background: var(--surface); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    transition: transform 300ms ease, opacity 300ms ease;
+    opacity: 0;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .app { padding: 12px 8px 32px; }
+    .header { flex-direction: column; align-items: flex-start; }
+    .rota-table .name-cell { padding: 6px 8px; font-size: 12px; }
+    .rota-table thead th:first-child { width: 80px; padding-left: 8px; }
+    .status-btn { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-left">
+      <h1>SITD Rota Manager</h1>
+      <p>Team working pattern planner</p>
+    </div>
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)" title="Previous week">◀</button>
+      <button class="today-btn" onclick="goToday()">Today</button>
+      <span class="week-label" id="weekLabel"></span>
+      <button onclick="changeWeek(1)" title="Next week">▶</button>
+    </div>
+  </div>
+
+  <div class="rota-wrapper">
+    <table class="rota-table" id="rotaTable">
+      <thead id="rotaHead"></thead>
+      <tbody id="rotaBody"></tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="copyTableHTML()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      Copy Rota Table
+    </button>
+    <button class="btn btn-primary" onclick="copySummaryText()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Copy Summary for Teams
+    </button>
+    <button class="btn" onclick="copyPreviousWeek()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-8.36L1 10"/></svg>
+      Copy Previous Week
+    </button>
+    <button class="btn" onclick="clearWeek()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6h12z"/></svg>
+      Clear Week
+    </button>
+  </div>
+
+  <div class="summary-panel">
+    <div class="summary-header">
+      <h2>Teams Message Summary</h2>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer;user-select:none;">
+          <input type="checkbox" id="showAllEvents" onchange="generateSummaries()" style="cursor:pointer;">
+          Include routine events
+        </label>
+        <button class="btn" onclick="regenerateSummaries()" style="padding:5px 10px;font-size:12px;">↻ Regenerate</button>
+      </div>
+    </div>
+    <div class="summary-body">
+      <div class="summary-intro">
+        <textarea id="summaryIntro" rows="2" placeholder="Intro message (e.g. 'Everyone - please see below for next weeks rota')"></textarea>
+      </div>
+      <div id="summaryTeamWide" style="margin-bottom:8px;"></div>
+      <div id="summaryItems"></div>
+    </div>
+  </div>
+</div>
+
+<div class="dropdown-overlay" id="dropdownOverlay" onclick="closeDropdown()"></div>
+<div class="dropdown" id="dropdown"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──
+const TEAM = ['Mike', 'John', 'Scott', 'Paige', 'Graham', 'Aaron', 'Chris'];
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+const STATUSES = {
+  'On-site (Full)': { bg: '#22c55e', text: '#fff', group: 'location' },
+  'On-site (AM)':   { bg: '#4ade80', text: '#000', group: 'location' },
+  'On-site (PM)':   { bg: '#4ade80', text: '#000', group: 'location' },
+  'WFH':            { bg: '#facc15', text: '#000', group: 'location' },
+  'AL':             { bg: '#ef4444', text: '#fff', group: 'leave' },
+  'AL (AM)':        { bg: '#ef4444', text: '#fff', group: 'leave' },
+  'AL (PM)':        { bg: '#ef4444', text: '#fff', group: 'leave' },
+  'SD':             { bg: '#0891b2', text: '#fff', group: 'assignment' },
+  'SITD':           { bg: '#a855f7', text: '#fff', group: 'assignment' },
+  'Non-Working Day':{ bg: '#9ca3af', text: '#fff', group: 'other' },
+};
+
+// Blocked day statuses (not user-selectable, auto-applied)
+const BLOCKED_STATUSES = {
+  'PH':                 { bg: '#1e3a5f', text: '#fff', label: 'Public Holiday' },
+  'CD':                 { bg: '#374151', text: '#fff', label: 'Closure Day' },
+  'PR':                 { bg: '#4b5563', text: '#fff', label: 'Privilege Day' },
+  '0.5 PR and 0.5 CD': { bg: '#4b5563', text: '#fff', label: '0.5 PR + 0.5 CD' },
+};
+
+// ── NOC SOUTHAMPTON BLOCKED DATES 2026 ──
+// From the NOC 2026 Privilege and Closure Days Schedule
+// Format: 'YYYY-MM-DD': 'TYPE'
+const NOC_BLOCKED_DATES = {
+  // Public Holidays
+  '2026-01-01': 'PH',   // New Year's Day (Thursday)
+  '2026-04-03': 'PH',   // Good Friday
+  '2026-04-06': 'PH',   // Easter Monday
+  '2026-05-04': 'PH',   // Early May Bank Holiday (Monday)
+  '2026-05-25': 'PH',   // Spring Bank Holiday Monday
+  '2026-08-31': 'PH',   // Late Summer Holiday Monday
+  '2026-12-25': 'PH',   // Christmas Day (Friday)
+  '2026-12-28': 'PH',   // Boxing Day (Monday - observed)
+
+  // Privilege / Closure Days from the NOC schedule
+  '2026-04-02': '0.5 PR and 0.5 CD',  // Thursday before Good Friday
+  '2026-04-07': 'PR',   // Tuesday after Easter
+  '2026-12-24': 'PR',   // Christmas Eve
+  '2026-12-29': 'CD',   // Mon 29 Dec
+  '2026-12-30': 'CD',   // Tue 30 Dec
+  '2026-12-31': 'CD',   // Wed 31 Dec
+
+  // Also need to cover future years - we'll compute public holidays dynamically
+};
+
+// Compute UK public holidays for any year (England & Wales)
+function getUKPublicHolidays(year) {
+  const holidays = {};
+
+  // New Year's Day
+  let nyd = new Date(year, 0, 1);
+  if (nyd.getDay() === 0) nyd = new Date(year, 0, 2); // Sun -> Mon
+  if (nyd.getDay() === 6) nyd = new Date(year, 0, 3); // Sat -> Mon
+  holidays[dateKey(nyd)] = 'PH';
+
+  // Easter (Anonymous Gregorian algorithm)
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31) - 1;
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  const easter = new Date(year, month, day);
+
+  // Good Friday
+  const goodFriday = new Date(easter);
+  goodFriday.setDate(easter.getDate() - 2);
+  holidays[dateKey(goodFriday)] = 'PH';
+
+  // Easter Monday
+  const easterMon = new Date(easter);
+  easterMon.setDate(easter.getDate() + 1);
+  holidays[dateKey(easterMon)] = 'PH';
+
+  // Early May Bank Holiday (first Monday in May)
+  for (let d = 1; d <= 7; d++) {
+    const dt = new Date(year, 4, d);
+    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
+  }
+
+  // Spring Bank Holiday (last Monday in May)
+  for (let d = 31; d >= 25; d--) {
+    const dt = new Date(year, 4, d);
+    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
+  }
+
+  // Summer Bank Holiday (last Monday in August)
+  for (let d = 31; d >= 25; d--) {
+    const dt = new Date(year, 7, d);
+    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
+  }
+
+  // Christmas Day
+  let xmas = new Date(year, 11, 25);
+  if (xmas.getDay() === 0) xmas = new Date(year, 11, 27); // Sun -> Tue
+  if (xmas.getDay() === 6) xmas = new Date(year, 11, 27); // Sat -> Mon
+  holidays[dateKey(xmas)] = 'PH';
+
+  // Boxing Day
+  let boxing = new Date(year, 11, 26);
+  if (boxing.getDay() === 0) boxing = new Date(year, 11, 28); // Sun -> Tue
+  if (boxing.getDay() === 6) boxing = new Date(year, 11, 28); // Sat -> Mon
+  // If Boxing Day falls same as shifted Christmas
+  if (dateKey(boxing) === dateKey(xmas)) {
+    boxing.setDate(boxing.getDate() + 1);
+  }
+  holidays[dateKey(boxing)] = 'PH';
+
+  return holidays;
+}
+
+function getBlockedStatus(date) {
+  const key = dateKey(date);
+  const year = date.getFullYear();
+
+  // Check explicit NOC blocked dates first (these include CD/PR)
+  if (NOC_BLOCKED_DATES[key]) return NOC_BLOCKED_DATES[key];
+
+  // Check computed public holidays
+  const phDates = getUKPublicHolidays(year);
+  if (phDates[key]) return phDates[key];
+
+  // Weekend check (shouldn't appear in Mon-Fri but just in case)
+  const dow = date.getDay();
+  if (dow === 0 || dow === 6) return 'PH';
+
+  return null;
+}
+
+function dateKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
+
+// Custom statuses
+let customStatuses = JSON.parse(localStorage.getItem('rota_custom_statuses') || '{}');
+
+function getStatusStyle(status) {
+  if (STATUSES[status]) return STATUSES[status];
+  if (BLOCKED_STATUSES[status]) return { bg: BLOCKED_STATUSES[status].bg, text: BLOCKED_STATUSES[status].text };
+  if (customStatuses[status]) return customStatuses[status];
+  return { bg: '#ec4899', text: '#fff', group: 'custom' };
+}
+
+// ── STATE ──
+let currentMonday = getMonday(new Date());
+let rotaData = loadAllData();
+
+function getMonday(d) {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+  date.setDate(diff);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function weekKey(monday) {
+  return monday.toISOString().slice(0, 10);
+}
+
+function loadAllData() {
+  return JSON.parse(localStorage.getItem('rota_data') || '{}');
+}
+
+function saveAllData() {
+  localStorage.setItem('rota_data', JSON.stringify(rotaData));
+  localStorage.setItem('rota_custom_statuses', JSON.stringify(customStatuses));
+}
+
+function getWeekData() {
+  const key = weekKey(currentMonday);
+  if (!rotaData[key]) {
+    rotaData[key] = {};
+    TEAM.forEach(name => {
+      rotaData[key][name] = ['', '', '', '', ''];
+    });
+  }
+  return rotaData[key];
+}
+
+function setStatus(person, dayIndex, status) {
+  const week = getWeekData();
+  week[person][dayIndex] = status;
+  saveAllData();
+  renderTable();
+  generateSummaries();
+}
+
+// ── WEEK NAV ──
+function changeWeek(delta) {
+  currentMonday = new Date(currentMonday);
+  currentMonday.setDate(currentMonday.getDate() + delta * 7);
+  render();
+}
+
+function goToday() {
+  currentMonday = getMonday(new Date());
+  render();
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+function formatDateOrdinal(date) {
+  const d = date.getDate();
+  const suffix = d === 1 || d === 21 || d === 31 ? 'st' : d === 2 || d === 22 ? 'nd' : d === 3 || d === 23 ? 'rd' : 'th';
+  return `${d}${suffix}`;
+}
+
+function getWeekDates() {
+  const dates = [];
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(currentMonday);
+    d.setDate(d.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+// ── COPY PREVIOUS WEEK ──
+function copyPreviousWeek() {
+  const prevMonday = new Date(currentMonday);
+  prevMonday.setDate(prevMonday.getDate() - 7);
+  const prevKey = weekKey(prevMonday);
+  const curKey = weekKey(currentMonday);
+
+  if (!rotaData[prevKey]) {
+    showToast('No data found for the previous week');
+    return;
+  }
+
+  // Check if current week already has data
+  const curWeek = getWeekData();
+  const hasData = TEAM.some(p => curWeek[p] && curWeek[p].some(s => s));
+  if (hasData && !confirm('This week already has data. Overwrite with previous week\'s rota?')) {
+    return;
+  }
+
+  // Copy previous week data, but skip blocked days
+  const dates = getWeekDates();
+  const prevWeek = rotaData[prevKey];
+
+  TEAM.forEach(person => {
+    const prevDays = prevWeek[person] || ['', '', '', '', ''];
+    const newDays = ['', '', '', '', ''];
+    for (let d = 0; d < 5; d++) {
+      const blocked = getBlockedStatus(dates[d]);
+      if (blocked) {
+        newDays[d] = ''; // blocked days handled by display
+      } else {
+        // Don't copy over blocked-day statuses from previous week
+        const prevStatus = prevDays[d];
+        if (BLOCKED_STATUSES[prevStatus]) {
+          newDays[d] = '';
+        } else {
+          newDays[d] = prevStatus;
+        }
+      }
+    }
+    curWeek[person] = newDays;
+  });
+
+  saveAllData();
+  render();
+  showToast('Previous week\'s rota copied!');
+}
+
+// ── RENDER ──
+function render() {
+  renderWeekLabel();
+  renderTable();
+  generateSummaries();
+}
+
+function renderWeekLabel() {
+  const dates = getWeekDates();
+  document.getElementById('weekLabel').textContent =
+    `${formatDate(dates[0])} – ${formatDate(dates[4])}, ${dates[0].getFullYear()}`;
+}
+
+function renderTable() {
+  const dates = getWeekDates();
+  const week = getWeekData();
+
+  // Header
+  let headHTML = '<tr><th>Team</th>';
+  dates.forEach((d, i) => {
+    const blocked = getBlockedStatus(d);
+    const blockedLabel = blocked ? `<span class="day-blocked">${BLOCKED_STATUSES[blocked]?.label || blocked}</span>` : '';
+    headHTML += `<th>
+      <span class="day-name">${DAY_SHORT[i]}</span>
+      <span class="day-date">${formatDateOrdinal(d)}</span>
+      ${blockedLabel}
+    </th>`;
+  });
+  headHTML += '</tr>';
+  document.getElementById('rotaHead').innerHTML = headHTML;
+
+  // Body
+  let bodyHTML = '';
+  TEAM.forEach(person => {
+    bodyHTML += `<tr><td class="name-cell">${person}</td>`;
+    for (let d = 0; d < 5; d++) {
+      const blocked = getBlockedStatus(dates[d]);
+      if (blocked) {
+        const bStyle = BLOCKED_STATUSES[blocked] || { bg: '#374151', text: '#fff', label: blocked };
+        bodyHTML += `<td class="status-cell">
+          <div class="status-btn blocked" style="background-color:${bStyle.bg};color:${bStyle.text};" title="${bStyle.label || blocked} - not editable">
+            ${bStyle.label || blocked}
+          </div>
+        </td>`;
+      } else {
+        const status = week[person]?.[d] || '';
+        const style = status ? getStatusStyle(status) : null;
+        const cls = status ? '' : 'empty';
+        const bgStyle = style ? `background:${style.bg};color:${style.text};` : '';
+        const label = status || '+';
+        bodyHTML += `<td class="status-cell">
+          <button class="status-btn ${cls}" style="${bgStyle}"
+            onclick="openDropdown(this, '${person}', ${d})">${label}</button>
+        </td>`;
+      }
+    }
+    bodyHTML += '</tr>';
+  });
+  document.getElementById('rotaBody').innerHTML = bodyHTML;
+}
+
+// ── DROPDOWN ──
+function openDropdown(btn, person, dayIndex) {
+  closeDropdown();
+  const dropdown = document.getElementById('dropdown');
+  const overlay = document.getElementById('dropdownOverlay');
+
+  const groups = {
+    'Location': ['On-site (Full)', 'On-site (AM)', 'On-site (PM)', 'WFH'],
+    'Leave': ['AL', 'AL (AM)', 'AL (PM)'],
+    'Assignment': ['SD', 'SITD'],
+    'Other': ['Non-Working Day'],
+  };
+
+  let html = '';
+  html += `<div class="dropdown-item clear-item" onclick="selectStatus('${person}', ${dayIndex}, '')">✕ Clear</div>`;
+  html += '<div class="dropdown-divider"></div>';
+
+  Object.entries(groups).forEach(([label, statuses]) => {
+    html += `<div class="dropdown-section">${label}</div>`;
+    statuses.forEach(s => {
+      const st = getStatusStyle(s);
+      html += `<div class="dropdown-item" onclick="selectStatus('${person}', ${dayIndex}, '${s}')">
+        <span class="swatch" style="background:${st.bg}"></span>
+        ${s}
+      </div>`;
+    });
+  });
+
+  const customKeys = Object.keys(customStatuses);
+  if (customKeys.length > 0) {
+    html += '<div class="dropdown-divider"></div>';
+    html += '<div class="dropdown-section">Custom</div>';
+    customKeys.forEach(s => {
+      const st = customStatuses[s];
+      html += `<div class="dropdown-item" onclick="selectStatus('${person}', ${dayIndex}, '${escapeHtml(s)}')">
+        <span class="swatch" style="background:${st.bg}"></span>
+        ${escapeHtml(s)}
+      </div>`;
+    });
+  }
+
+  html += '<div class="dropdown-divider"></div>';
+  html += '<div class="dropdown-section">Add Custom Status</div>';
+  html += `<div class="custom-input-row">
+    <input type="text" id="customStatusInput" placeholder="e.g. MS SQL Course" onkeydown="if(event.key==='Enter')addCustomStatus('${person}', ${dayIndex})">
+    <button onclick="addCustomStatus('${person}', ${dayIndex})">Add</button>
+  </div>`;
+
+  dropdown.innerHTML = html;
+
+  const rect = btn.getBoundingClientRect();
+  let top = rect.bottom + 4;
+  let left = rect.left;
+
+  dropdown.classList.add('open');
+  const dRect = dropdown.getBoundingClientRect();
+  if (top + dRect.height > window.innerHeight - 20) top = rect.top - dRect.height - 4;
+  if (left + dRect.width > window.innerWidth - 20) left = window.innerWidth - dRect.width - 20;
+
+  dropdown.style.top = top + 'px';
+  dropdown.style.left = left + 'px';
+  overlay.classList.add('open');
+}
+
+function closeDropdown() {
+  document.getElementById('dropdown').classList.remove('open');
+  document.getElementById('dropdownOverlay').classList.remove('open');
+}
+
+function selectStatus(person, dayIndex, status) {
+  setStatus(person, dayIndex, status);
+  closeDropdown();
+}
+
+function addCustomStatus(person, dayIndex) {
+  const input = document.getElementById('customStatusInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (!customStatuses[name]) {
+    const colours = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#6366f1', '#14b8a6', '#f43f5e'];
+    const idx = Object.keys(customStatuses).length % colours.length;
+    customStatuses[name] = { bg: colours[idx], text: '#fff', group: 'custom' };
+  }
+  setStatus(person, dayIndex, name);
+  closeDropdown();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ── SUMMARIES ──
+function generateTeamWideSummary(dates) {
+  const blockedDays = [];
+  dates.forEach((d, i) => {
+    const blocked = getBlockedStatus(d);
+    if (blocked) {
+      const bInfo = BLOCKED_STATUSES[blocked];
+      const label = bInfo ? bInfo.label : blocked;
+      blockedDays.push({ date: d, dayName: FULL_DAY_NAMES[i], label });
+    }
+  });
+
+  if (blockedDays.length === 0) return '';
+
+  // Group consecutive blocked days of the same type
+  const parts = [];
+  let i = 0;
+  while (i < blockedDays.length) {
+    const current = blockedDays[i];
+    // Check if there's a run of the same type
+    let j = i + 1;
+    while (j < blockedDays.length && blockedDays[j].label === current.label) {
+      j++;
+    }
+    const group = blockedDays.slice(i, j);
+    if (group.length === 1) {
+      parts.push(`${group[0].dayName} ${formatDateOrdinal(group[0].date)} is a ${group[0].label}`);
+    } else {
+      const dayNames = group.map(g => g.dayName);
+      const lastDay = dayNames.pop();
+      parts.push(`${dayNames.join(', ')} and ${lastDay} are ${group[0].label}s`);
+    }
+    i = j;
+  }
+
+  return parts.join('. ');
+}
+
+function generateSummaries() {
+  const week = getWeekData();
+  const dates = getWeekDates();
+
+  // Team-wide blocked days
+  const teamWideContainer = document.getElementById('summaryTeamWide');
+  const teamWideSummary = generateTeamWideSummary(dates);
+  if (teamWideSummary) {
+    teamWideContainer.innerHTML = `<div class="summary-item" style="background:var(--surface-alt);border-radius:var(--radius);padding:4px 0;">
+      <span class="person-name" style="color:var(--accent);min-width:70px;">Everyone</span>
+      <textarea rows="1" oninput="autoResize(this)" data-person="Everyone">${teamWideSummary}</textarea>
+    </div>`;
+    teamWideContainer.querySelectorAll('textarea').forEach(ta => autoResize(ta));
+  } else {
+    teamWideContainer.innerHTML = '';
+  }
+
+  // Per-person summaries
+  const container = document.getElementById('summaryItems');
+  let html = '';
+
+  TEAM.forEach(person => {
+    const days = week[person] || ['', '', '', '', ''];
+    const summary = autoSummary(person, days, dates);
+    html += `<div class="summary-item">
+      <span class="person-name">${person}</span>
+      <textarea rows="1" oninput="autoResize(this)" data-person="${person}">${summary}</textarea>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  container.querySelectorAll('textarea').forEach(ta => autoResize(ta));
+
+  const intro = document.getElementById('summaryIntro');
+  if (!intro.value && !intro.dataset.touched) {
+    const dates2 = getWeekDates();
+    intro.value = `Everyone - please see below for the rota for w/c ${formatDate(dates2[0])}:`;
+  }
+}
+
+function regenerateSummaries() {
+  const intro = document.getElementById('summaryIntro');
+  intro.dataset.touched = '';
+  intro.value = '';
+  generateSummaries();
+}
+
+// ── NATURAL LANGUAGE HELPERS ──
+const FULL_DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+function formatDateNatural(d) {
+  const dayName = d.toLocaleDateString('en-GB', { weekday: 'long' });
+  const ord = formatDateOrdinal(d);
+  const month = d.toLocaleDateString('en-GB', { month: 'long' });
+  return `${dayName} ${ord} ${month}`;
+}
+
+function formatDateShortNatural(d) {
+  const ord = formatDateOrdinal(d);
+  const month = d.toLocaleDateString('en-GB', { month: 'long' });
+  return `${ord} ${month}`;
+}
+
+function dayListNatural(indices, dates) {
+  // indices are 0-4 (Mon-Fri), dates are the actual Date objects for this week
+  if (indices.length === 0) return '';
+  if (indices.length === 1) return formatDateNatural(dates[indices[0]]);
+
+  // Check if consecutive
+  const isConsecutive = indices.every((v, i) => i === 0 || v === indices[i - 1] + 1);
+  if (isConsecutive && indices.length >= 2) {
+    return `${formatDateNatural(dates[indices[0]])} to ${formatDateNatural(dates[indices[indices.length - 1]])}`;
+  }
+
+  // Non-consecutive: list with "and"
+  const names = indices.map(i => FULL_DAY_NAMES[i]);
+  if (names.length === 2) return names.join(' and ');
+  return names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+}
+
+// Look ahead through future weeks to find when a person's AL ends
+function findALReturnDate(person, lastALDate) {
+  // Start checking from the day after the last AL day in this week
+  let checkDate = new Date(lastALDate);
+  checkDate.setDate(checkDate.getDate() + 1);
+
+  // Look ahead up to 8 weeks (40 working days)
+  const maxLookahead = 56; // calendar days
+  const endDate = new Date(lastALDate);
+  endDate.setDate(endDate.getDate() + maxLookahead);
+
+  let lastConsecutiveAL = new Date(lastALDate);
+
+  while (checkDate <= endDate) {
+    const dow = checkDate.getDay();
+
+    // Skip weekends
+    if (dow === 0 || dow === 6) {
+      checkDate.setDate(checkDate.getDate() + 1);
+      continue;
+    }
+
+    // Check if it's a blocked day (PH/CD/PR) - these don't break AL streaks
+    const blocked = getBlockedStatus(checkDate);
+    if (blocked) {
+      lastConsecutiveAL = new Date(checkDate);
+      checkDate.setDate(checkDate.getDate() + 1);
+      continue;
+    }
+
+    // Check the rota data for this date's week
+    const monday = getMonday(checkDate);
+    const mk = weekKey(monday);
+    const weekData = rotaData[mk];
+
+    if (!weekData || !weekData[person]) {
+      // No data for this week - can't look further
+      break;
+    }
+
+    // Which day of the week is this? (0=Mon, 4=Fri)
+    const dayIdx = Math.round((checkDate - monday) / (1000 * 60 * 60 * 24));
+    if (dayIdx < 0 || dayIdx > 4) {
+      checkDate.setDate(checkDate.getDate() + 1);
+      continue;
+    }
+
+    const status = weekData[person][dayIdx];
+    if (status && status.startsWith('AL')) {
+      lastConsecutiveAL = new Date(checkDate);
+      checkDate.setDate(checkDate.getDate() + 1);
+      continue;
+    }
+
+    // Found a non-AL working day - this is their return date
+    return { returnDate: new Date(checkDate), lastALDay: lastConsecutiveAL };
+  }
+
+  // If AL continues past the last populated week
+  if (lastConsecutiveAL > lastALDate) {
+    return { returnDate: null, lastALDay: lastConsecutiveAL };
+  }
+  return null;
+}
+
+// Also look backwards to find when AL started (if it started before this week)
+function findALStartDate(person, firstALDate) {
+  let checkDate = new Date(firstALDate);
+  checkDate.setDate(checkDate.getDate() - 1);
+
+  const maxLookback = 56;
+  const limitDate = new Date(firstALDate);
+  limitDate.setDate(limitDate.getDate() - maxLookback);
+
+  let earliestAL = new Date(firstALDate);
+
+  while (checkDate >= limitDate) {
+    const dow = checkDate.getDay();
+
+    if (dow === 0 || dow === 6) {
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    }
+
+    const blocked = getBlockedStatus(checkDate);
+    if (blocked) {
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    }
+
+    const monday = getMonday(checkDate);
+    const mk = weekKey(monday);
+    const weekData = rotaData[mk];
+
+    if (!weekData || !weekData[person]) break;
+
+    const dayIdx = Math.round((checkDate - monday) / (1000 * 60 * 60 * 24));
+    if (dayIdx < 0 || dayIdx > 4) {
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    }
+
+    const status = weekData[person][dayIdx];
+    if (status && status.startsWith('AL')) {
+      earliestAL = new Date(checkDate);
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    }
+
+    break;
+  }
+
+  return earliestAL;
+}
+
+// Count working days off between two dates (inclusive)
+// Includes: AL days (from rota data), PH, CD, PR, 0.5PR+0.5CD (all blocked days)
+function countDaysOff(person, startDate, endDate) {
+  let count = 0;
+  let checkDate = new Date(startDate);
+  checkDate.setHours(0, 0, 0, 0);
+  const end = new Date(endDate);
+  end.setHours(23, 59, 59, 999);
+
+  while (checkDate <= end) {
+    const dow = checkDate.getDay();
+    // Skip weekends
+    if (dow === 0 || dow === 6) {
+      checkDate.setDate(checkDate.getDate() + 1);
+      continue;
+    }
+
+    // Check if blocked (PH/CD/PR etc) - counts as a day off
+    const blocked = getBlockedStatus(checkDate);
+    if (blocked) {
+      count++;
+      checkDate.setDate(checkDate.getDate() + 1);
+      continue;
+    }
+
+    // Check rota data for AL
+    const monday = getMonday(checkDate);
+    const mk = weekKey(monday);
+    const weekData = rotaData[mk];
+    if (weekData && weekData[person]) {
+      const dayIdx = Math.round((checkDate - monday) / (1000 * 60 * 60 * 24));
+      if (dayIdx >= 0 && dayIdx <= 4) {
+        const status = weekData[person][dayIdx];
+        if (status && status.startsWith('AL')) {
+          count++;
+        }
+      }
+    }
+
+    checkDate.setDate(checkDate.getDate() + 1);
+  }
+  return count;
+}
+
+function formatDayCount(n) {
+  if (n === 1) return '1 day';
+  return `${n} days`;
+}
+
+function autoSummary(person, days, dates) {
+  const showAll = document.getElementById('showAllEvents')?.checked || false;
+
+  const ROUTINE = new Set(['On-site (Full)', 'On-site (AM)', 'On-site (PM)', 'WFH', 'Non-Working Day']);
+
+  // Categorise each day (ignoring blocked days for user-set statuses)
+  const dayInfo = days.map((status, i) => {
+    const blocked = getBlockedStatus(dates[i]);
+    return { status: blocked ? null : status, blocked, index: i, date: dates[i] };
+  });
+
+  const alIndices = [];
+  const alPartialAM = [];
+  const alPartialPM = [];
+  const sdIndices = [];
+  const sitdIndices = [];
+  const customEntries = [];
+  const onsiteIndices = [];
+  const wfhIndices = [];
+  const nwdIndices = [];
+
+  dayInfo.forEach(d => {
+    if (d.blocked || !d.status) return;
+    if (d.status === 'AL') alIndices.push(d.index);
+    else if (d.status === 'AL (AM)') alPartialAM.push(d.index);
+    else if (d.status === 'AL (PM)') alPartialPM.push(d.index);
+    else if (d.status === 'SD') sdIndices.push(d.index);
+    else if (d.status === 'SITD') sitdIndices.push(d.index);
+    else if (d.status.startsWith('On-site')) onsiteIndices.push(d.index);
+    else if (d.status === 'WFH') wfhIndices.push(d.index);
+    else if (d.status === 'Non-Working Day') nwdIndices.push(d.index);
+    else customEntries.push({ index: d.index, status: d.status });
+  });
+
+  const hasUnusual = alIndices.length || alPartialAM.length || alPartialPM.length ||
+                     customEntries.length;
+
+  if (!hasUnusual && !showAll) return '';
+
+  const sentences = [];
+
+  // ── Annual Leave (full days) ──
+  if (alIndices.length > 0) {
+    const allFullAL = dayInfo.filter(d => !d.blocked).every(d => d.status === 'AL');
+
+    // Determine the true start and end of the AL period
+    const firstALThisWeek = dates[alIndices[0]];
+    const lastALThisWeek = dates[alIndices[alIndices.length - 1]];
+    const thisWeekStart = dates[0];
+
+    // Look back to find if AL started before this week
+    const alStart = findALStartDate(person, firstALThisWeek);
+    const startedBefore = alStart < thisWeekStart;
+
+    // Look ahead to find return date (check from last AL day in this week)
+    const lookAhead = findALReturnDate(person, lastALThisWeek);
+
+    // Determine the full span for day counting
+    const periodStart = startedBefore ? alStart : firstALThisWeek;
+    let periodEnd = lastALThisWeek;
+    let returnDate = null;
+    let continuesUnknown = false;
+
+    if (lookAhead && lookAhead.returnDate) {
+      // AL ends the day before the return date
+      periodEnd = new Date(lookAhead.returnDate);
+      periodEnd.setDate(periodEnd.getDate() - 1);
+      returnDate = lookAhead.returnDate;
+    } else if (lookAhead && !lookAhead.returnDate && lookAhead.lastALDay > lastALThisWeek) {
+      periodEnd = lookAhead.lastALDay;
+      continuesUnknown = true;
+    }
+
+    const totalDays = countDaysOff(person, periodStart, periodEnd);
+    const dayCountStr = ` (${formatDayCount(totalDays)})`;
+
+    if (allFullAL) {
+      let alText;
+      if (startedBefore) {
+        alText = `On annual leave from ${formatDateNatural(alStart)}`;
+      } else if (alIndices.length === 1) {
+        alText = `On annual leave ${formatDateNatural(firstALThisWeek)}`;
+      } else {
+        alText = 'On annual leave all week';
+      }
+
+      if (returnDate) {
+        alText += `, returns ${formatDateNatural(returnDate)}${dayCountStr}`;
+      } else if (continuesUnknown) {
+        alText += `, AL continues until at least ${formatDateShortNatural(periodEnd)}${dayCountStr}`;
+      } else {
+        alText += dayCountStr;
+      }
+
+      sentences.push(alText);
+    } else {
+      // Partial week AL
+      const isConsecutive = alIndices.every((v, i) => i === 0 || v === alIndices[i - 1] + 1);
+
+      if (isConsecutive && alIndices.length >= 2) {
+        let alText;
+        if (startedBefore) {
+          alText = `On annual leave from ${formatDateNatural(alStart)}`;
+        } else {
+          alText = `On annual leave ${formatDateNatural(firstALThisWeek)} to ${formatDateNatural(lastALThisWeek)}`;
+        }
+
+        if (returnDate) {
+          alText += `, returns ${formatDateNatural(returnDate)}${dayCountStr}`;
+        } else if (continuesUnknown) {
+          alText += `, AL continues until at least ${formatDateShortNatural(periodEnd)}${dayCountStr}`;
+        } else {
+          alText += dayCountStr;
+        }
+
+        sentences.push(alText);
+      } else if (alIndices.length === 1) {
+        // Single day
+        let alText = `On annual leave ${formatDateNatural(firstALThisWeek)} for ${formatDayCount(1)}`;
+        sentences.push(alText);
+      } else {
+        // Non-consecutive AL days
+        const dayNames = alIndices.map(i => FULL_DAY_NAMES[i]);
+        let alText = `On annual leave ${dayNames.join(' and ')} (${formatDayCount(alIndices.length)})`;
+        sentences.push(alText);
+      }
+    }
+  }
+
+  // ── Partial AL ──
+  if (alPartialAM.length > 0) {
+    const dayNames = alPartialAM.map(i => FULL_DAY_NAMES[i]);
+    sentences.push(`Annual leave (morning) ${dayNames.join(' and ')}`);
+  }
+  if (alPartialPM.length > 0) {
+    const dayNames = alPartialPM.map(i => FULL_DAY_NAMES[i]);
+    sentences.push(`Annual leave (afternoon) ${dayNames.join(' and ')}`);
+  }
+
+  // ── Custom statuses (courses etc.) - always shown ──
+  const customGrouped = {};
+  customEntries.forEach(e => {
+    if (!customGrouped[e.status]) customGrouped[e.status] = [];
+    customGrouped[e.status].push(e.index);
+  });
+  Object.entries(customGrouped).forEach(([status, indices]) => {
+    const dayNames = indices.map(i => FULL_DAY_NAMES[i]);
+    sentences.push(`${status} ${dayNames.join(' and ')}`);
+  });
+
+  // ── Routine (only when toggle is on) ──
+  if (showAll) {
+    if (sdIndices.length > 0) {
+      const dayNames = sdIndices.map(i => FULL_DAY_NAMES[i]);
+      sentences.push(`Working on Service Desk ${dayNames.join(' and ')}`);
+    }
+    if (sitdIndices.length > 0) {
+      const dayNames = sitdIndices.map(i => FULL_DAY_NAMES[i]);
+      sentences.push(`Working on SITD ${dayNames.join(' and ')}`);
+    }
+    if (onsiteIndices.length > 0) {
+      const dayNames = onsiteIndices.map(i => FULL_DAY_NAMES[i]);
+      sentences.push(`On-site ${dayNames.join(' and ')}`);
+    }
+    if (wfhIndices.length > 0) {
+      const dayNames = wfhIndices.map(i => FULL_DAY_NAMES[i]);
+      sentences.push(`Working from home ${dayNames.join(' and ')}`);
+    }
+    if (nwdIndices.length > 0) {
+      const dayNames = nwdIndices.map(i => FULL_DAY_NAMES[i]);
+      sentences.push(`Non-working day ${dayNames.join(' and ')}`);
+    }
+  }
+
+  if (sentences.length === 0) return '';
+  return sentences.join('. ');
+}
+
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+// ── COPY FUNCTIONS ──
+function copyTableHTML() {
+  const dates = getWeekDates();
+  const week = getWeekData();
+  const monthName = dates[0].toLocaleDateString('en-GB', { month: 'long' });
+
+  let html = `<table style="border-collapse:collapse;font-family:Segoe UI,Calibri,Arial,sans-serif;font-size:11pt;width:100%;">`;
+
+  html += `<tr>`;
+  html += `<td style="padding:6px 10px;font-weight:bold;background:#2563eb;color:#fff;border:1px solid #ccc;font-size:11pt;">${monthName}</td>`;
+  DAYS.forEach(day => {
+    html += `<td style="padding:6px 10px;font-weight:bold;background:#2563eb;color:#fff;border:1px solid #ccc;text-align:center;font-size:11pt;">${day}</td>`;
+  });
+  html += `</tr>`;
+
+  html += `<tr>`;
+  html += `<td style="padding:4px 10px;font-weight:bold;background:#f0f0f0;border:1px solid #ccc;font-size:10pt;">Date</td>`;
+  dates.forEach(d => {
+    html += `<td style="padding:4px 10px;text-align:center;background:#f0f0f0;border:1px solid #ccc;font-size:10pt;font-weight:bold;">${formatDateOrdinal(d)}</td>`;
+  });
+  html += `</tr>`;
+
+  TEAM.forEach(person => {
+    html += `<tr>`;
+    html += `<td style="padding:5px 10px;font-weight:bold;border:1px solid #ccc;font-size:10pt;">${person}</td>`;
+    const days = week[person] || ['', '', '', '', ''];
+    days.forEach((status, i) => {
+      const blocked = getBlockedStatus(dates[i]);
+      let label, bg, color;
+      if (blocked) {
+        const bStyle = BLOCKED_STATUSES[blocked] || {};
+        label = bStyle.label || blocked;
+        bg = bStyle.bg || '#374151';
+        color = bStyle.text || '#fff';
+      } else {
+        const style = status ? getStatusStyle(status) : null;
+        label = status || '';
+        bg = style ? style.bg : '#fff';
+        color = style ? style.text : '#999';
+      }
+      html += `<td style="padding:5px 10px;text-align:center;background:${bg};color:${color};border:1px solid #ccc;font-weight:600;font-size:10pt;">${label}</td>`;
+    });
+    html += `</tr>`;
+  });
+
+  html += `</table>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const plainText = generatePlainTextTable();
+  const item = new ClipboardItem({
+    'text/html': blob,
+    'text/plain': new Blob([plainText], { type: 'text/plain' })
+  });
+
+  navigator.clipboard.write([item]).then(() => {
+    showToast('Rota table copied to clipboard!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = plainText;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Copied as plain text');
+  });
+}
+
+function generatePlainTextTable() {
+  const dates = getWeekDates();
+  const week = getWeekData();
+  let lines = [];
+  lines.push(['', ...DAYS].join('\t'));
+  lines.push(['Date', ...dates.map(formatDateOrdinal)].join('\t'));
+
+  TEAM.forEach(person => {
+    const days = week[person] || ['', '', '', '', ''];
+    const display = days.map((s, i) => {
+      const blocked = getBlockedStatus(dates[i]);
+      if (blocked) return BLOCKED_STATUSES[blocked]?.label || blocked;
+      return s;
+    });
+    lines.push([person, ...display].join('\t'));
+  });
+
+  return lines.join('\n');
+}
+
+function copySummaryText() {
+  const intro = document.getElementById('summaryIntro').value;
+  const teamWideItems = document.querySelectorAll('#summaryTeamWide textarea');
+  const items = document.querySelectorAll('#summaryItems textarea');
+  let lines = [];
+
+  if (intro.trim()) lines.push(intro.trim());
+  lines.push('');
+
+  // Team-wide notes first
+  teamWideItems.forEach(ta => {
+    const text = ta.value.trim();
+    if (text) {
+      lines.push(`• ${text}`);
+    }
+  });
+
+  // Per-person summaries
+  items.forEach(ta => {
+    const text = ta.value.trim();
+    const person = ta.dataset.person;
+    if (text) {
+      lines.push(`• ${person}: ${text}`);
+    }
+  });
+
+  lines.push('');
+  lines.push('Let me know if I\'ve missed anything');
+
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Summary copied to clipboard!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Summary copied!');
+  });
+}
+
+function clearWeek() {
+  if (!confirm('Clear all statuses for this week?')) return;
+  const key = weekKey(currentMonday);
+  delete rotaData[key];
+  saveAllData();
+  render();
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+render();
+
+document.getElementById('summaryIntro').addEventListener('input', function () {
+  this.dataset.touched = 'true';
+});
+</script>
+</body>
+</html>
