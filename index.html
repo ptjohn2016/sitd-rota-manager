@@ -564,6 +564,8 @@
 <div class="dropdown" id="dropdown"></div>
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 <script>
 // ── CONFIG ──
 const TEAM = ['Mike', 'John', 'Scott', 'Paige', 'Graham', 'Aaron', 'Chris'];
@@ -716,7 +718,7 @@ function dateKey(d) {
 }
 
 // Custom statuses
-let customStatuses = JSON.parse(localStorage.getItem('rota_custom_statuses') || '{}');
+let customStatuses = {};
 
 function getStatusStyle(status) {
   if (STATUSES[status]) return STATUSES[status];
@@ -727,7 +729,7 @@ function getStatusStyle(status) {
 
 // ── STATE ──
 let currentMonday = getMonday(new Date());
-let rotaData = loadAllData();
+let rotaData = {};
 
 function getMonday(d) {
   const date = new Date(d);
@@ -742,13 +744,39 @@ function weekKey(monday) {
   return monday.toISOString().slice(0, 10);
 }
 
-function loadAllData() {
-  return JSON.parse(localStorage.getItem('rota_data') || '{}');
-}
+// ── FIREBASE SETUP ──
+const firebaseConfig = {
+  // OVERWRITE THIS OBJECT WITH YOUR ACTUAL CONFIG FROM FIREBASE
+  apiKey: "AIzaSyA2kCvLQc2dBWlYmNd65BdZ7DVGRZeywJI",
+  authDomain: "sitd-rota-manager.firebaseapp.com",
+  projectId: "sitd-rota-manager",
+  storageBucket: "sitd-rota-manager.firebasestorage.app",
+  messagingSenderId: "231353000923",
+  appId: "1:231353000923:web:1203b2e3bb7c4d3dfe7dfe"
+};
 
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Listen for updates from Firebase and refresh the screen instantly
+db.ref('teamRota').on('value', (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    rotaData = data.rotaData || {};
+    customStatuses = data.customStatuses || {};
+  } else {
+    rotaData = {};
+    customStatuses = {};
+  }
+  render(); 
+});
+
+// Save data to Firebase
 function saveAllData() {
-  localStorage.setItem('rota_data', JSON.stringify(rotaData));
-  localStorage.setItem('rota_custom_statuses', JSON.stringify(customStatuses));
+  db.ref('teamRota').set({
+    rotaData: rotaData,
+    customStatuses: customStatuses
+  });
 }
 
 function getWeekData() {
