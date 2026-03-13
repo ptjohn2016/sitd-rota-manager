@@ -1401,8 +1401,6 @@ function formatDayCount(n) {
 function autoSummary(person, days, dates) {
   const showAll = document.getElementById('showAllEvents')?.checked || false;
 
-  const ROUTINE = new Set(['On-site (Full)', 'On-site (AM)', 'On-site (PM)', 'WFH', 'Non-Working Day']);
-
   // Categorise each day (ignoring blocked days for user-set statuses)
   const dayInfo = days.map((status, i) => {
     const blocked = getBlockedStatus(dates[i]);
@@ -1438,31 +1436,56 @@ function autoSummary(person, days, dates) {
   if (!hasUnusual && !showAll) return '';
 
   const sentences = [];
+  const thisWeekStart = dates[0]; // Monday of current week
+
+  // Helper for "next" Wednesday etc.
+  function formatReturnDateNatural(returnDate) {
+    const nextMonday = new Date(thisWeekStart);
+    nextMonday.setDate(nextMonday.getDate() + 7);
+    const upperMonday = new Date(thisWeekStart);
+    upperMonday.setDate(upperMonday.getDate() + 14);
+
+    const dayName = returnDate.toLocaleDateString('en-GB', { weekday: 'long' });
+    const ord = formatDateOrdinal(returnDate);
+    const month = returnDate.toLocaleDateString('en-GB', { month: 'long' });
+
+    if (returnDate >= nextMonday && returnDate < upperMonday) {
+      return `next ${dayName} ${ord} ${month}`;
+    }
+    return `${dayName} ${ord} ${month}`;
+  }
+
+  // Helper for clean consecutive days phrasing
+  function formatDayNamesList(indices) {
+    if (indices.length === 0) return '';
+    if (indices.length === 1) return FULL_DAY_NAMES[indices[0]];
+    const isConsecutive = indices.every((v, i) => i === 0 || v === indices[i - 1] + 1);
+    if (isConsecutive && indices.length >= 3) {
+      return `${FULL_DAY_NAMES[indices[0]]} to ${FULL_DAY_NAMES[indices[indices.length - 1]]}`;
+    }
+    const names = indices.map(i => FULL_DAY_NAMES[i]);
+    if (names.length === 2) return names.join(' and ');
+    return names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
+  }
 
   // ── Annual Leave (full days) ──
   if (alIndices.length > 0) {
     const allFullAL = dayInfo.filter(d => !d.blocked).every(d => d.status === 'AL');
 
-    // Determine the true start and end of the AL period
     const firstALThisWeek = dates[alIndices[0]];
     const lastALThisWeek = dates[alIndices[alIndices.length - 1]];
-    const thisWeekStart = dates[0];
-
-    // Look back to find if AL started before this week
+    
     const alStart = findALStartDate(person, firstALThisWeek);
     const startedBefore = alStart < thisWeekStart;
 
-    // Look ahead to find return date (check from last AL day in this week)
     const lookAhead = findALReturnDate(person, lastALThisWeek);
 
-    // Determine the full span for day counting
     const periodStart = startedBefore ? alStart : firstALThisWeek;
     let periodEnd = lastALThisWeek;
     let returnDate = null;
     let continuesUnknown = false;
 
     if (lookAhead && lookAhead.returnDate) {
-      // AL ends the day before the return date
       periodEnd = new Date(lookAhead.returnDate);
       periodEnd.setDate(periodEnd.getDate() - 1);
       returnDate = lookAhead.returnDate;
@@ -1478,6 +1501,8 @@ function autoSummary(person, days, dates) {
       let alText;
       if (startedBefore) {
         alText = `On annual leave from ${formatDateNatural(alStart)}`;
+      } else if (returnDate || continuesUnknown) {
+        alText = `On annual leave from ${formatDateNatural(firstALThisWeek)}`;
       } else if (alIndices.length === 1) {
         alText = `On annual leave ${formatDateNatural(firstALThisWeek)}`;
       } else {
@@ -1485,7 +1510,7 @@ function autoSummary(person, days, dates) {
       }
 
       if (returnDate) {
-        alText += `, returns ${formatDateNatural(returnDate)}${dayCountStr}`;
+        alText += `, returns ${formatReturnDateNatural(returnDate)}${dayCountStr}`;
       } else if (continuesUnknown) {
         alText += `, AL continues until at least ${formatDateShortNatural(periodEnd)}${dayCountStr}`;
       } else {
@@ -1501,12 +1526,14 @@ function autoSummary(person, days, dates) {
         let alText;
         if (startedBefore) {
           alText = `On annual leave from ${formatDateNatural(alStart)}`;
+        } else if (returnDate || continuesUnknown) {
+          alText = `On annual leave from ${formatDateNatural(firstALThisWeek)}`;
         } else {
           alText = `On annual leave ${formatDateNatural(firstALThisWeek)} to ${formatDateNatural(lastALThisWeek)}`;
         }
 
         if (returnDate) {
-          alText += `, returns ${formatDateNatural(returnDate)}${dayCountStr}`;
+          alText += `, returns ${formatReturnDateNatural(returnDate)}${dayCountStr}`;
         } else if (continuesUnknown) {
           alText += `, AL continues until at least ${formatDateShortNatural(periodEnd)}${dayCountStr}`;
         } else {
@@ -1515,67 +1542,41 @@ function autoSummary(person, days, dates) {
 
         sentences.push(alText);
       } else if (alIndices.length === 1) {
-        // Single day
         let alText = `On annual leave ${formatDateNatural(firstALThisWeek)} for ${formatDayCount(1)}`;
         sentences.push(alText);
       } else {
-        // Non-consecutive AL days
-        const dayNames = alIndices.map(i => FULL_DAY_NAMES[i]);
-        let alText = `On annual leave ${dayNames.join(' and ')} (${formatDayCount(alIndices.length)})`;
+        let alText = `On annual leave ${formatDayNamesList(alIndices)} (${formatDayCount(alIndices.length)})`;
         sentences.push(alText);
       }
     }
   }
 
   // ── Partial AL ──
-  if (alPartialAM.length > 0) {
-    const dayNames = alPartialAM.map(i => FULL_DAY_NAMES[i]);
-    sentences.push(`Annual leave (morning) ${dayNames.join(' and ')}`);
-  }
-  if (alPartialPM.length > 0) {
-    const dayNames = alPartialPM.map(i => FULL_DAY_NAMES[i]);
-    sentences.push(`Annual leave (afternoon) ${dayNames.join(' and ')}`);
-  }
+  if (alPartialAM.length > 0) sentences.push(`Annual leave (morning) ${formatDayNamesList(alPartialAM)}`);
+  if (alPartialPM.length > 0) sentences.push(`Annual leave (afternoon) ${formatDayNamesList(alPartialPM)}`);
 
-  // ── Custom statuses (courses etc.) - always shown ──
+  // ── Custom statuses ──
   const customGrouped = {};
   customEntries.forEach(e => {
     if (!customGrouped[e.status]) customGrouped[e.status] = [];
     customGrouped[e.status].push(e.index);
   });
   Object.entries(customGrouped).forEach(([status, indices]) => {
-    const dayNames = indices.map(i => FULL_DAY_NAMES[i]);
-    sentences.push(`${status} ${dayNames.join(' and ')}`);
+    sentences.push(`${status} ${formatDayNamesList(indices)}`);
   });
 
-  // ── Routine (only when toggle is on) ──
+  // ── Routine ──
   if (showAll) {
-    if (sdIndices.length > 0) {
-      const dayNames = sdIndices.map(i => FULL_DAY_NAMES[i]);
-      sentences.push(`Working on Service Desk ${dayNames.join(' and ')}`);
-    }
-    if (sitdIndices.length > 0) {
-      const dayNames = sitdIndices.map(i => FULL_DAY_NAMES[i]);
-      sentences.push(`Working on SITD ${dayNames.join(' and ')}`);
-    }
-    if (onsiteIndices.length > 0) {
-      const dayNames = onsiteIndices.map(i => FULL_DAY_NAMES[i]);
-      sentences.push(`On-site ${dayNames.join(' and ')}`);
-    }
-    if (wfhIndices.length > 0) {
-      const dayNames = wfhIndices.map(i => FULL_DAY_NAMES[i]);
-      sentences.push(`Working from home ${dayNames.join(' and ')}`);
-    }
-    if (nwdIndices.length > 0) {
-      const dayNames = nwdIndices.map(i => FULL_DAY_NAMES[i]);
-      sentences.push(`Non-working day ${dayNames.join(' and ')}`);
-    }
+    if (sdIndices.length > 0) sentences.push(`Working on Service Desk ${formatDayNamesList(sdIndices)}`);
+    if (sitdIndices.length > 0) sentences.push(`Working on SITD ${formatDayNamesList(sitdIndices)}`);
+    if (onsiteIndices.length > 0) sentences.push(`On-site ${formatDayNamesList(onsiteIndices)}`);
+    if (wfhIndices.length > 0) sentences.push(`Working from home ${formatDayNamesList(wfhIndices)}`);
+    if (nwdIndices.length > 0) sentences.push(`Non-working day ${formatDayNamesList(nwdIndices)}`);
   }
 
   if (sentences.length === 0) return '';
   return sentences.join('. ');
 }
-
 function autoResize(ta) {
   ta.style.height = 'auto';
   ta.style.height = ta.scrollHeight + 'px';
