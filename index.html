@@ -800,12 +800,6 @@ db.ref('teamRota').on('value', (snapshot) => {
 });
 
 // Save data to Firebase
-function saveAllData() {
-  db.ref('teamRota').set({
-    rotaData: rotaData,
-    customStatuses: customStatuses
-  });
-}
 
 function getWeekData() {
   const key = weekKey(currentMonday);
@@ -818,10 +812,14 @@ function getWeekData() {
   return rotaData[key];
 }
 
-function setStatus(person, dayIndex, status) {
+ffunction setStatus(person, dayIndex, status) {
   const week = getWeekData();
   week[person][dayIndex] = status;
-  saveAllData();
+  
+  // Targeted save: only update this specific person's week in the DB
+  const key = weekKey(currentMonday);
+  db.ref(`teamRota/rotaData/${key}/${person}`).set(week[person]);
+  
   renderTable();
   generateSummaries();
 }
@@ -901,7 +899,9 @@ function copyPreviousWeek() {
     curWeek[person] = newDays;
   });
 
-  saveAllData();
+  // Targeted Firebase save instead of saveAllData()
+  db.ref(`teamRota/rotaData/${curKey}`).set(curWeek);
+  
   render();
   showToast('Previous week\'s rota copied!');
 }
@@ -1001,9 +1001,15 @@ function openDropdown(btn, person, dayIndex) {
     html += '<div class="dropdown-section">Custom</div>';
     customKeys.forEach(s => {
       const st = customStatuses[s];
-      html += `<div class="dropdown-item" onclick="selectStatus('${person}', ${dayIndex}, '${escapeHtml(s)}')">
-        <span class="swatch" style="background:${st.bg}"></span>
-        ${escapeHtml(s)}
+      const safeName = escapeHtml(s).replace(/'/g, "\\'"); // Prevent quote breaks
+
+      html += `<div class="dropdown-item" style="padding-right: 4px;">
+        <div style="display:flex;align-items:center;gap:8px;flex:1" onclick="selectStatus('${person}', ${dayIndex}, '${safeName}')">
+          <span class="swatch" style="background:${st.bg}"></span>
+          ${escapeHtml(s)}
+        </div>
+        <button onclick="renameCustomStatus('${safeName}')" style="background:none;border:none;cursor:pointer;opacity:0.6;font-size:12px;padding:2px;" title="Rename">✏️</button>
+        <button onclick="deleteCustomStatus('${safeName}')" style="background:none;border:none;cursor:pointer;opacity:0.6;color:red;font-size:12px;padding:2px;" title="Delete">✕</button>
       </div>`;
     });
   }
@@ -1030,7 +1036,6 @@ function openDropdown(btn, person, dayIndex) {
   dropdown.style.left = left + 'px';
   overlay.classList.add('open');
 }
-
 function closeDropdown() {
   document.getElementById('dropdown').classList.remove('open');
   document.getElementById('dropdownOverlay').classList.remove('open');
@@ -1049,6 +1054,9 @@ function addCustomStatus(person, dayIndex) {
     const colours = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#6366f1', '#14b8a6', '#f43f5e'];
     const idx = Object.keys(customStatuses).length % colours.length;
     customStatuses[name] = { bg: colours[idx], text: '#fff', group: 'custom' };
+    
+    // Save the new custom status to Firebase
+    db.ref('teamRota/customStatuses').set(customStatuses);
   }
   setStatus(person, dayIndex, name);
   closeDropdown();
@@ -1058,6 +1066,52 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// --- NEW FUNCTIONS GO IMMEDIATELY BELOW ---
+
+function renameCustomStatus(oldName) {
+  const newName = prompt(`Rename '${oldName}' to:`, oldName);
+  if (!newName || newName.trim() === "" || newName === oldName) return;
+  const finalName = newName.trim();
+
+  // 1. Migrate the color tag in the custom library
+  customStatuses[finalName] = customStatuses[oldName];
+  delete customStatuses[oldName];
+  db.ref('teamRota/customStatuses').set(customStatuses);
+
+  // 2. Scan every saved week and update existing records
+  Object.keys(rotaData).forEach(weekKey => {
+    let weekChanged = false;
+    Object.keys(rotaData[weekKey]).forEach(teamMember => {
+      rotaData[weekKey][teamMember].forEach((status, i) => {
+        if (status === oldName) {
+          rotaData[weekKey][teamMember][i] = finalName;
+          weekChanged = true;
+        }
+      });
+    });
+    // If we changed a typo in this week, push the fix to Firebase
+    if (weekChanged) {
+      db.ref(`teamRota/rotaData/${weekKey}`).set(rotaData[weekKey]);
+    }
+  });
+
+  render();
+  closeDropdown();
+  showToast('Status renamed and updated everywhere!');
+}
+
+function deleteCustomStatus(name) {
+  if (!confirm(`Delete '${name}' from suggestions?\n\nThis won't remove it from days already assigned, but it will revert to a default color.`)) return;
+  
+  // Remove from the options library
+  delete customStatuses[name];
+  db.ref('teamRota/customStatuses').set(customStatuses);
+  
+  render();
+  closeDropdown();
+  showToast('Custom status deleted.');
 }
 
 // ── SUMMARIES ──
@@ -1655,11 +1709,14 @@ function copySummaryText() {
   });
 }
 
-function clearWeek() {
+ffunction clearWeek() {
   if (!confirm('Clear all statuses for this week?')) return;
   const key = weekKey(currentMonday);
   delete rotaData[key];
-  saveAllData();
+  
+  // Targeted Firebase delete instead of saveAllData()
+  db.ref(`teamRota/rotaData/${key}`).remove();
+  
   render();
 }
 
