@@ -812,7 +812,7 @@ function getWeekData() {
   return rotaData[key];
 }
 
-ffunction setStatus(person, dayIndex, status) {
+function setStatus(person, dayIndex, status) {
   const week = getWeekData();
   week[person][dayIndex] = status;
   
@@ -1709,7 +1709,7 @@ function copySummaryText() {
   });
 }
 
-ffunction clearWeek() {
+function clearWeek() {
   if (!confirm('Clear all statuses for this week?')) return;
   const key = weekKey(currentMonday);
   delete rotaData[key];
