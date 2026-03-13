@@ -781,22 +781,23 @@ function login() {
 auth.onAuthStateChanged((user) => {
   if (user) {
     document.getElementById('loginOverlay').style.display = 'none'; // Hide login box
+    
+    // Listen for updates from Firebase ONLY after successful login
+    db.ref('teamRota').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        rotaData = data.rotaData || {};
+        customStatuses = data.customStatuses || {};
+      } else {
+        rotaData = {};
+        customStatuses = {};
+      }
+      render(); 
+    });
   } else {
     document.getElementById('loginOverlay').style.display = 'flex'; // Show login box
+    db.ref('teamRota').off('value'); // Disconnect if logged out
   }
-});
-
-// Listen for updates from Firebase and refresh the screen instantly
-db.ref('teamRota').on('value', (snapshot) => {
-  const data = snapshot.val();
-  if (data) {
-    rotaData = data.rotaData || {};
-    customStatuses = data.customStatuses || {};
-  } else {
-    rotaData = {};
-    customStatuses = {};
-  }
-  render(); 
 });
 
 // Save data to Firebase
