@@ -601,7 +601,7 @@ const BLOCKED_STATUSES = {
   'PH':                 { bg: '#1e3a5f', text: '#fff', label: 'Public Holiday' },
   'CD':                 { bg: '#374151', text: '#fff', label: 'Closure Day' },
   'PR':                 { bg: '#4b5563', text: '#fff', label: 'Privilege Day' },
-  '0.5 PR and 0.5 CD': { bg: '#4b5563', text: '#fff', label: '0.5 PR + 0.5 CD' },
+  '0.5 PR and 0.5 CD': { bg: '#4b5563', text: '#fff', label: '0.5 Privilege Day + 0.5 Closure Day' },
 };
 
 // ── NOC SOUTHAMPTON BLOCKED DATES 2026 ──
@@ -1142,7 +1142,8 @@ function generateTeamWideSummary(dates) {
     }
     const group = blockedDays.slice(i, j);
     if (group.length === 1) {
-      parts.push(`${group[0].dayName} ${formatDateOrdinal(group[0].date)} is a ${group[0].label}`);
+      // Uses the natural formatter to include the month
+      parts.push(`${group[0].dayName} ${formatDateShortNatural(group[0].date)} is a ${group[0].label}`);
     } else {
       const dayNames = group.map(g => g.dayName);
       const lastDay = dayNames.pop();
