@@ -36,22 +36,22 @@
     --shadow-glass: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
     --transition: 180ms ease;
 
-    /* ── Status Palette (softer, warmer) ── */
-    --st-onsite:      #48bb78;
+    /* ── Status Palette (rich, saturated) ── */
+    --st-onsite:      #1a9a5a;
     --st-onsite-text:  #fff;
-    --st-onsite-am:   #68d391;
-    --st-onsite-am-text: #1a3a2a;
-    --st-wfh:         #ecc94b;
-    --st-wfh-text:    #5a4a10;
-    --st-al:          #fc8181;
+    --st-onsite-am:   #2db872;
+    --st-onsite-am-text: #fff;
+    --st-wfh:         #d4960a;
+    --st-wfh-text:    #fff;
+    --st-al:          #d63031;
     --st-al-text:     #fff;
-    --st-sd:          #4fd1c5;
+    --st-sd:          #0891b2;
     --st-sd-text:     #fff;
-    --st-sitd:        #b794f4;
+    --st-sitd:        #7c3aed;
     --st-sitd-text:   #fff;
-    --st-nwd:         #a0aec0;
+    --st-nwd:         #64748b;
     --st-nwd-text:    #fff;
-    --st-blocked:     #4a5568;
+    --st-blocked:     #334155;
     --st-blocked-text:#fff;
   }
 
@@ -194,7 +194,7 @@
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-glass);
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .rota-table {
@@ -233,8 +233,8 @@
     display: block;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    font-weight: 400;
-    color: var(--text-muted);
+    font-weight: 500;
+    color: var(--text);
     margin-top: 2px;
   }
 
@@ -467,37 +467,45 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
-  /* ── ACTION BAR ── */
+  /* ── ACTION BAR (inside rota card) ── */
+  .rota-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    background: rgba(255,255,255,0.25);
+  }
+
   .actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
     align-items: center;
+    flex: 1;
   }
 
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 10px 18px;
+    gap: 6px;
+    padding: 7px 14px;
     border: 1px solid var(--glass-border);
-    background: var(--glass-strong);
-    backdrop-filter: blur(var(--blur));
-    -webkit-backdrop-filter: blur(var(--blur));
-    border-radius: var(--radius);
+    background: rgba(255,255,255,0.55);
+    border-radius: 8px;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     color: var(--text);
     transition: all var(--transition);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-sm);
   }
 
   .btn:hover {
-    background: var(--glass-strong);
-    box-shadow: var(--shadow-lg);
+    background: rgba(255,255,255,0.8);
+    box-shadow: var(--shadow);
     transform: translateY(-1px);
     border-color: rgba(79,109,245,0.3);
     color: var(--accent);
@@ -507,23 +515,25 @@
     background: var(--accent);
     color: #fff;
     border-color: var(--accent);
-    box-shadow: 0 4px 14px rgba(79, 109, 245, 0.25);
+    box-shadow: 0 2px 8px rgba(79, 109, 245, 0.2);
   }
 
   .btn-primary:hover {
     background: var(--accent-hover);
     border-color: var(--accent-hover);
     color: #fff;
-    box-shadow: 0 6px 20px rgba(79, 109, 245, 0.35);
+    box-shadow: 0 4px 14px rgba(79, 109, 245, 0.3);
   }
 
-  .btn svg { width: 15px; height: 15px; }
+  .btn svg { width: 14px; height: 14px; }
 
-  .actions-meta {
+  .update-meta {
     margin-left: auto;
     font-size: 11px;
     color: var(--text-muted);
     font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   /* ── SUMMARY PANEL ── */
@@ -679,6 +689,10 @@
     .avatar { width: 24px; height: 24px; }
     .avatar svg { width: 12px; height: 12px; }
     .name-inner { gap: 6px; }
+    .rota-footer { flex-direction: column; align-items: stretch; }
+    .actions { justify-content: center; }
+    .update-meta { text-align: center; margin-left: 0; }
+    .btn { font-size: 11px; padding: 6px 10px; }
   }
 </style>
 </head>
@@ -715,26 +729,27 @@
         <thead id="rotaHead"></thead>
         <tbody id="rotaBody"></tbody>
       </table>
-    </div>
-
-    <div class="actions">
-      <button class="btn btn-primary" onclick="copyTableHTML()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        Copy Rota Table
-      </button>
-      <button class="btn btn-primary" onclick="copySummaryText()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        Copy Summary for Teams
-      </button>
-      <button class="btn" onclick="copyPreviousWeek()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-8.36L1 10"/></svg>
-        Copy Previous Week
-      </button>
-      <button class="btn" onclick="clearWeek()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6h12z"/></svg>
-        Clear Week
-      </button>
-      <span class="actions-meta" id="updateMeta"></span>
+      <div class="rota-footer">
+        <div class="actions">
+          <button class="btn btn-primary" onclick="copyTableHTML()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy Rota Table
+          </button>
+          <button class="btn btn-primary" onclick="copySummaryText()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Copy Summary for Teams
+          </button>
+          <button class="btn" onclick="copyPreviousWeek()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-8.36L1 10"/></svg>
+            Copy Previous Week
+          </button>
+          <button class="btn" onclick="clearWeek()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6h12z"/></svg>
+            Clear Week
+          </button>
+        </div>
+        <span class="update-meta" id="updateMeta">Loading...</span>
+      </div>
     </div>
 
     <div class="summary-panel">
@@ -939,6 +954,27 @@ function login() {
     .catch((error) => alert("Login failed: " + error.message));
 }
 
+let lastUpdatedTime = null;
+
+function updateTimestamp() {
+  lastUpdatedTime = new Date();
+  updateMetaDisplay();
+}
+
+function updateMetaDisplay() {
+  const el = document.getElementById('updateMeta');
+  if (!lastUpdatedTime) { el.textContent = ''; return; }
+  const now = new Date();
+  const diff = Math.floor((now - lastUpdatedTime) / 1000);
+  if (diff < 5) el.textContent = 'Updated just now';
+  else if (diff < 60) el.textContent = `Updated ${diff}s ago`;
+  else if (diff < 3600) el.textContent = `Updated ${Math.floor(diff/60)} min ago`;
+  else el.textContent = `Updated ${Math.floor(diff/3600)}h ago`;
+}
+
+// Tick the "updated X ago" every 15s
+setInterval(updateMetaDisplay, 15000);
+
 auth.onAuthStateChanged((user) => {
   if (user) {
     document.getElementById('loginOverlay').style.display = 'none';
@@ -951,6 +987,7 @@ auth.onAuthStateChanged((user) => {
         rotaData = {};
         customStatuses = {};
       }
+      updateTimestamp();
       render();
     });
   } else {
@@ -975,6 +1012,7 @@ function setStatus(person, dayIndex, status) {
   week[person][dayIndex] = status;
   const key = weekKey(currentMonday);
   db.ref(`teamRota/rotaData/${key}/${person}`).set(week[person]);
+  updateTimestamp();
   renderTable();
   generateSummaries();
 }
@@ -1742,13 +1780,13 @@ function copyTableHTML() {
 
 // Resolve CSS variables to hex for clipboard HTML
 const BG_MAP = {
-  'On-site (Full)': '#48bb78', 'On-site (AM)': '#68d391', 'On-site (PM)': '#68d391',
-  'WFH': '#ecc94b', 'AL': '#fc8181', 'AL (AM)': '#fc8181', 'AL (PM)': '#fc8181',
-  'SD': '#4fd1c5', 'SITD': '#b794f4', 'Non-Working Day': '#a0aec0'
+  'On-site (Full)': '#1a9a5a', 'On-site (AM)': '#2db872', 'On-site (PM)': '#2db872',
+  'WFH': '#d4960a', 'AL': '#d63031', 'AL (AM)': '#d63031', 'AL (PM)': '#d63031',
+  'SD': '#0891b2', 'SITD': '#7c3aed', 'Non-Working Day': '#64748b'
 };
 const COLOR_MAP = {
-  'On-site (Full)': '#fff', 'On-site (AM)': '#1a3a2a', 'On-site (PM)': '#1a3a2a',
-  'WFH': '#5a4a10', 'AL': '#fff', 'AL (AM)': '#fff', 'AL (PM)': '#fff',
+  'On-site (Full)': '#fff', 'On-site (AM)': '#fff', 'On-site (PM)': '#fff',
+  'WFH': '#fff', 'AL': '#fff', 'AL (AM)': '#fff', 'AL (PM)': '#fff',
   'SD': '#fff', 'SITD': '#fff', 'Non-Working Day': '#fff'
 };
 
