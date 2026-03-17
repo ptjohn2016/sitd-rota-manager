@@ -681,6 +681,21 @@
     background: transparent;
     color: var(--text);
     min-height: 28px;
+    overflow: hidden;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .summary-row textarea::-webkit-inner-spin-button,
+  .summary-row textarea::-webkit-outer-spin-button,
+  .summary-row textarea::-webkit-resizer {
+    display: none;
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .summary-intro textarea::-webkit-resizer {
+    display: none;
   }
 
   .summary-row textarea:hover { border-color: var(--border); }
