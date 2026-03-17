@@ -556,11 +556,14 @@
     background: rgba(255,255,255,0.25);
   }
 
-  .summary-header h2 { font-size: 14px; font-weight: 700; }
+  .summary-header h2 { font-size: 15px; font-weight: 700; }
 
-  .summary-body { padding: 12px 18px; }
+  .summary-body { padding: 0; }
 
-  .summary-intro { margin-bottom: 12px; }
+  .summary-intro {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-light);
+  }
 
   .summary-intro textarea {
     width: 100%;
@@ -579,25 +582,93 @@
 
   .summary-intro textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.75); }
 
-  .summary-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border-light);
+  .summary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 
-  .summary-item:last-child { border-bottom: none; }
+  .summary-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border-light);
+    min-height: 48px;
+    transition: background var(--transition);
+  }
 
-  .summary-item .person-name {
-    font-weight: 600;
-    font-size: 13px;
-    min-width: 70px;
-    padding-top: 6px;
+  .summary-row:last-child { border-bottom: none; }
+
+  .summary-row:nth-child(odd) {
+    background: rgba(255,255,255,0.15);
+  }
+
+  .summary-row:nth-child(even) {
+    background: rgba(240,242,248,0.25);
+  }
+
+  .summary-row:hover {
+    background: rgba(255,255,255,0.35);
+  }
+
+  .summary-row .avatar {
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
   }
 
-  .summary-item textarea {
+  .summary-row .person-name {
+    font-weight: 700;
+    font-size: 13.5px;
+    min-width: 68px;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+
+  .summary-row .summary-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .summary-row .summary-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .summary-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .summary-badge .badge-icon {
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .summary-detail-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .summary-row textarea {
     flex: 1;
     border: 1px solid transparent;
     border-radius: var(--radius);
@@ -609,11 +680,29 @@
     outline: none;
     background: transparent;
     color: var(--text);
-    min-height: 30px;
+    min-height: 28px;
   }
 
-  .summary-item textarea:hover { border-color: var(--border); }
-  .summary-item textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.5); }
+  .summary-row textarea:hover { border-color: var(--border); }
+  .summary-row textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.5); }
+
+  .summary-row.team-wide {
+    background: rgba(79, 109, 245, 0.06);
+  }
+
+  .summary-row.team-wide .person-name {
+    color: var(--accent);
+  }
+
+  .summary-footer {
+    padding: 8px 18px;
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    border-top: 1px solid var(--border-light);
+    background: rgba(255,255,255,0.15);
+  }
 
   /* ── TOAST ── */
   .toast {
@@ -693,6 +782,11 @@
     .actions { justify-content: center; }
     .update-meta { text-align: center; margin-left: 0; }
     .btn { font-size: 11px; padding: 6px 10px; }
+    .summary-row { padding: 8px 12px; gap: 8px; flex-wrap: wrap; }
+    .summary-row .avatar { width: 24px; height: 24px; }
+    .summary-row .summary-content { flex-basis: 100%; margin-left: 36px; gap: 6px; flex-wrap: wrap; }
+    .summary-divider { display: none; }
+    .summary-badge { font-size: 11px; }
   }
 </style>
 </head>
@@ -767,9 +861,10 @@
         <div class="summary-intro">
           <textarea id="summaryIntro" rows="2" placeholder="Intro message (e.g. 'Everyone - please see below for next weeks rota')"></textarea>
         </div>
-        <div id="summaryTeamWide" style="margin-bottom:8px;"></div>
+        <div id="summaryTeamWide"></div>
         <div id="summaryItems"></div>
       </div>
+      <div class="summary-footer" id="summaryFooter"></div>
     </div>
   </div>
 
@@ -1344,36 +1439,120 @@ function generateTeamWideSummary(dates) {
   return parts.join('. ');
 }
 
+// Helper: determine primary status category for a person this week
+function getPrimarySummaryStatus(person, days, dates) {
+  const dayInfo = days.map((status, i) => {
+    const blocked = getBlockedStatus(dates[i]);
+    return blocked ? null : status;
+  }).filter(Boolean);
+
+  if (dayInfo.length === 0) return null;
+
+  // Count occurrences
+  const counts = {};
+  dayInfo.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
+
+  // Priority: AL > custom > SD/SITD > WFH > On-site
+  const priorityOrder = ['AL', 'AL (AM)', 'AL (PM)'];
+  for (const p of priorityOrder) {
+    if (counts[p]) return p;
+  }
+
+  // Check for custom statuses
+  for (const s of Object.keys(counts)) {
+    if (!STATUSES[s] && !BLOCKED_STATUSES[s]) return s;
+  }
+
+  // Check assignment statuses
+  if (counts['SD']) return 'SD';
+  if (counts['SITD']) return 'SITD';
+
+  // Most common remaining
+  let top = null, topCount = 0;
+  Object.entries(counts).forEach(([s, c]) => {
+    if (c > topCount) { top = s; topCount = c; }
+  });
+  return top;
+}
+
+function buildSummaryBadge(status) {
+  if (!status) return '';
+  const style = getStatusStyle(status);
+  const icon = style.icon || '📌';
+  const bg = BG_MAP[status] || (style.bg && !style.bg.startsWith('var') ? style.bg : '#64748b');
+  const color = COLOR_MAP[status] || '#fff';
+  // Friendly label
+  const labels = {
+    'AL': 'Annual Leave (AL)',
+    'AL (AM)': 'Annual Leave (AM)',
+    'AL (PM)': 'Annual Leave (PM)',
+    'WFH': 'WFH',
+    'On-site (Full)': 'On-site (Full)',
+    'On-site (AM)': 'On-site (AM)',
+    'On-site (PM)': 'On-site (PM)',
+    'SD': 'Service Desk',
+    'SITD': 'SITD',
+    'Non-Working Day': 'Non-Working Day'
+  };
+  const label = labels[status] || status;
+  return `<span class="summary-badge" style="background:${bg};color:${color};">
+    <span class="badge-icon">${icon}</span>${label}
+  </span>`;
+}
+
 function generateSummaries() {
   const week = getWeekData();
   const dates = getWeekDates();
 
+  // Team-wide blocked days
   const teamWideContainer = document.getElementById('summaryTeamWide');
   const teamWideSummary = generateTeamWideSummary(dates);
   if (teamWideSummary) {
-    teamWideContainer.innerHTML = `<div class="summary-item" style="background:rgba(255,255,255,0.3);border-radius:var(--radius);padding:4px 0;">
-      <span class="person-name" style="color:var(--accent);min-width:70px;">Everyone</span>
-      <textarea rows="1" oninput="autoResize(this)" data-person="Everyone">${teamWideSummary}</textarea>
+    teamWideContainer.innerHTML = `<div class="summary-row team-wide">
+      <div class="avatar">${AVATAR_SVG}</div>
+      <span class="person-name">Everyone</span>
+      <span class="summary-divider"></span>
+      <div class="summary-content">
+        <textarea rows="1" oninput="autoResize(this)" data-person="Everyone">${teamWideSummary}</textarea>
+      </div>
     </div>`;
     teamWideContainer.querySelectorAll('textarea').forEach(ta => autoResize(ta));
   } else {
     teamWideContainer.innerHTML = '';
   }
 
+  // Per-person summaries
   const container = document.getElementById('summaryItems');
   let html = '';
+  let countWithContent = 0;
 
   TEAM.forEach(person => {
     const days = week[person] || ['', '', '', '', ''];
     const summary = autoSummary(person, days, dates);
-    html += `<div class="summary-item">
+    const primaryStatus = getPrimarySummaryStatus(person, days, dates);
+    const badge = summary ? buildSummaryBadge(primaryStatus) : '';
+
+    html += `<div class="summary-row">
+      <div class="avatar">${AVATAR_SVG}</div>
       <span class="person-name">${person}</span>
-      <textarea rows="1" oninput="autoResize(this)" data-person="${person}">${summary}</textarea>
+      <span class="summary-divider"></span>
+      <div class="summary-content">
+        ${badge}
+        <textarea rows="1" oninput="autoResize(this)" data-person="${person}">${summary}</textarea>
+      </div>
     </div>`;
+
+    if (summary) countWithContent++;
   });
 
   container.innerHTML = html;
   container.querySelectorAll('textarea').forEach(ta => autoResize(ta));
+
+  // Footer page count
+  const footer = document.getElementById('summaryFooter');
+  const total = TEAM.length;
+  const notable = countWithContent + (teamWideSummary ? 1 : 0);
+  footer.textContent = `${notable} notable entr${notable === 1 ? 'y' : 'ies'} · ${total} team members`;
 
   const intro = document.getElementById('summaryIntro');
   if (!intro.value && !intro.dataset.touched) {
