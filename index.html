@@ -956,9 +956,8 @@ function login() {
 
 let lastUpdatedTime = null;
 
-function updateTimestamp() {
-  lastUpdatedTime = new Date();
-  updateMetaDisplay();
+function saveLastUpdated() {
+  db.ref('teamRota/lastUpdated').set(Date.now());
 }
 
 function updateMetaDisplay() {
@@ -966,10 +965,18 @@ function updateMetaDisplay() {
   if (!lastUpdatedTime) { el.textContent = ''; return; }
   const now = new Date();
   const diff = Math.floor((now - lastUpdatedTime) / 1000);
-  if (diff < 5) el.textContent = 'Updated just now';
+  if (diff < 10) el.textContent = 'Updated just now';
   else if (diff < 60) el.textContent = `Updated ${diff}s ago`;
-  else if (diff < 3600) el.textContent = `Updated ${Math.floor(diff/60)} min ago`;
-  else el.textContent = `Updated ${Math.floor(diff/3600)}h ago`;
+  else if (diff < 3600) {
+    const mins = Math.floor(diff / 60);
+    el.textContent = `Updated ${mins} min${mins > 1 ? 's' : ''} ago`;
+  } else if (diff < 86400) {
+    const hrs = Math.floor(diff / 3600);
+    el.textContent = `Updated ${hrs} hour${hrs > 1 ? 's' : ''} ago`;
+  } else {
+    const days = Math.floor(diff / 86400);
+    el.textContent = `Updated ${days} day${days > 1 ? 's' : ''} ago`;
+  }
 }
 
 // Tick the "updated X ago" every 15s
@@ -983,11 +990,14 @@ auth.onAuthStateChanged((user) => {
       if (data) {
         rotaData = data.rotaData || {};
         customStatuses = data.customStatuses || {};
+        if (data.lastUpdated) {
+          lastUpdatedTime = new Date(data.lastUpdated);
+          updateMetaDisplay();
+        }
       } else {
         rotaData = {};
         customStatuses = {};
       }
-      updateTimestamp();
       render();
     });
   } else {
@@ -1012,7 +1022,7 @@ function setStatus(person, dayIndex, status) {
   week[person][dayIndex] = status;
   const key = weekKey(currentMonday);
   db.ref(`teamRota/rotaData/${key}/${person}`).set(week[person]);
-  updateTimestamp();
+  saveLastUpdated();
   renderTable();
   generateSummaries();
 }
@@ -1090,6 +1100,7 @@ function copyPreviousWeek() {
   });
 
   db.ref(`teamRota/rotaData/${curKey}`).set(curWeek);
+  saveLastUpdated();
   render();
   showToast('Previous week\'s rota copied!');
 }
@@ -1283,6 +1294,7 @@ function renameCustomStatus(oldName) {
 
   render();
   closeDropdown();
+  saveLastUpdated();
   showToast('Status renamed and updated everywhere!');
 }
 
@@ -1290,6 +1302,7 @@ function deleteCustomStatus(name) {
   if (!confirm(`Delete '${name}' from suggestions?\n\nThis won't remove it from days already assigned, but it will revert to a default color.`)) return;
   delete customStatuses[name];
   db.ref('teamRota/customStatuses').set(customStatuses);
+  saveLastUpdated();
   render();
   closeDropdown();
   showToast('Custom status deleted.');
@@ -1867,6 +1880,7 @@ function clearWeek() {
   const key = weekKey(currentMonday);
   delete rotaData[key];
   db.ref(`teamRota/rotaData/${key}`).remove();
+  saveLastUpdated();
   render();
 }
 
