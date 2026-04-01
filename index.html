@@ -1117,25 +1117,29 @@ auth.onAuthStateChanged((user) => {
 });
 
 function getWeekData() {
-  const key = weekKey(currentMonday);
-  if (!rotaData[key]) {
-    rotaData[key] = {};
+    const key = weekKey(currentMonday);
+    if (!rotaData[key]) {
+      rotaData[key] = {};
+    }
+    // Always backfill missing team members (fixes Firebase partial-data race)
     TEAM.forEach(name => {
-      rotaData[key][name] = ['', '', '', '', ''];
+      if (!rotaData[key][name] || !Array.isArray(rotaData[key][name])) {
+        rotaData[key][name] = ['', '', '', '', ''];
+      }
     });
+    return rotaData[key];
   }
-  return rotaData[key];
-}
 
 function setStatus(person, dayIndex, status) {
-  const week = getWeekData();
-  week[person][dayIndex] = status;
-  const key = weekKey(currentMonday);
-  db.ref(`teamRota/rotaData/${key}/${person}`).set(week[person]);
-  saveLastUpdated();
-  renderTable();
-  generateSummaries();
-}
+    const key = weekKey(currentMonday);
+    const week = getWeekData();
+    week[person][dayIndex] = status;
+    // Write full week to prevent partial-data race condition
+    db.ref(`teamRota/rotaData/${key}`).set(week);
+    saveLastUpdated();
+    renderTable();
+    generateSummaries();
+  }
 
 // ── WEEK NAV ──
 function changeWeek(delta) {
