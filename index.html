@@ -1574,7 +1574,9 @@ function generateSummaries() {
   footer.textContent = `${notable} notable entr${notable === 1 ? 'y' : 'ies'} · ${total} team members`;
 
   const intro = document.getElementById('summaryIntro');
-  if (!intro.value && !intro.dataset.touched) {
+  
+  // FIX APPLIED HERE: We only check if it hasn't been manually touched by the user.
+  if (!intro.dataset.touched) {
     const dates2 = getWeekDates();
     intro.value = `Everyone - please see below for the rota for w/c ${formatDate(dates2[0])}:`;
   }
