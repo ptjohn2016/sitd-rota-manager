@@ -2345,6 +2345,10 @@ function scanALForward(person, fromDate) {
     if (isWeekend(cursor)) { cursor = addDays(cursor, 1); continue; }
     if (getBlockedStatus(cursor)) { pendingBlocked.push(new Date(cursor)); cursor = addDays(cursor, 1); continue; }
     const status = statusFor(person, cursor);
+    /* A day this person never works is not a return to work — skip it the same
+       way as a weekend or bank holiday and keep looking. Without this, someone
+       who doesn't work Mondays was reported as "returns Monday". */
+    if (status === 'Non-Working Day') { pendingBlocked.push(new Date(cursor)); cursor = addDays(cursor, 1); continue; }
     if (status === undefined || status === '') return { lastAL, returnDate: null };
     if (status === 'AL') {
       lastAL = new Date(cursor);
@@ -2366,6 +2370,7 @@ function scanALBackward(person, fromDate) {
     if (isWeekend(cursor)) { cursor = addDays(cursor, -1); continue; }
     if (getBlockedStatus(cursor)) { cursor = addDays(cursor, -1); continue; }
     const status = statusFor(person, cursor);
+    if (status === 'Non-Working Day') { cursor = addDays(cursor, -1); continue; }
     if (status !== 'AL') break;
     earliest = new Date(cursor);
     cursor = addDays(cursor, -1);
@@ -2433,7 +2438,10 @@ function autoSummary(person, days, dates, showAll) {
     const total = countLeaveDays(person, startedEarlier ? start : first, periodEnd);
     const count = ` (${formatDayCount(total)})`;
     const consecutive = buckets.AL.every((v, i) => i === 0 || v === buckets.AL[i - 1] + 1);
-    const wholeWeek = dates.every((d, i) => getBlockedStatus(d) || days[i] === 'AL');
+    /* "All week" means all the days this person actually works, so a part-timer
+       on leave for every working day still reads as away all week. */
+    const wholeWeek = dates.every((d, i) =>
+      getBlockedStatus(d) || days[i] === 'AL' || days[i] === 'Non-Working Day');
 
     let text;
     if (startedEarlier) text = `On annual leave from ${formatDateNatural(start)}`;
