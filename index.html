@@ -1111,6 +1111,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             Copy Rota Table
           </button>
+          <button type="button" class="btn btn-primary" id="copyImageBtn" title="Copy the rota as a picture — colours always survive, even where Teams strips formatting">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Copy as Image
+          </button>
           <button type="button" class="btn btn-primary" id="copySummaryBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             Copy Summary for Teams
@@ -2750,6 +2754,145 @@ function buildTableHTML() {
   return html + '</table>';
 }
 
+/* ── Copy as an image ──────────────────────────────────────────
+   Teams' compose box sanitises pasted HTML and can drop cell shading. A PNG
+   can't be sanitised, so the colour coding always survives. Drawn straight
+   onto a canvas rather than via a screenshot library: no dependency, and the
+   output is identical everywhere. */
+const IMG = { nameW: 150, dayW: 150, titleH: 42, headH: 36, dateH: 26, rowH: 38, font: '"Segoe UI", Calibri, Arial, sans-serif' };
+
+function imageLayout() {
+  return {
+    width: IMG.nameW + IMG.dayW * 5,
+    height: IMG.titleH + IMG.headH + IMG.dateH + IMG.rowH * TEAM.length,
+    cellX: i => IMG.nameW + IMG.dayW * i,
+    rowY: r => IMG.titleH + IMG.headH + IMG.dateH + IMG.rowH * r
+  };
+}
+
+function drawImageCell(ctx, x, y, w, h, bg, fg, text, weight, align) {
+  ctx.fillStyle = bg;
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = '#c9ccd1';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+  if (!text) return;
+
+  const pad = 10;
+  let size = 13;
+  ctx.font = `${weight} ${size}px ${IMG.font}`;
+  while (ctx.measureText(text).width > w - pad * 2 && size > 9) {
+    size--;
+    ctx.font = `${weight} ${size}px ${IMG.font}`;
+  }
+  let label = text;
+  if (ctx.measureText(label).width > w - pad * 2) {
+    while (label.length > 1 && ctx.measureText(label + '…').width > w - pad * 2) label = label.slice(0, -1);
+    label += '…';
+  }
+  ctx.fillStyle = fg;
+  ctx.textAlign = align;
+  ctx.fillText(label, align === 'left' ? x + pad : x + w / 2, y + h / 2 + 1);
+}
+
+function buildTableImage() {
+  const dates = getWeekDates();
+  const week = getWeekData();
+  const L = imageLayout();
+  const scale = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(L.width * scale);
+  canvas.height = Math.round(L.height * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+  ctx.textBaseline = 'middle';
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, L.width, L.height);
+
+  // Title
+  ctx.fillStyle = '#1f2937';
+  ctx.font = `700 15px ${IMG.font}`;
+  ctx.textAlign = 'left';
+  ctx.fillText(`SITD Rota — w/c ${formatDateNatural(dates[0])} ${dates[0].getFullYear()}`, 10, IMG.titleH / 2 + 1);
+
+  // Day header
+  const headY = IMG.titleH;
+  drawImageCell(ctx, 0, headY, IMG.nameW, IMG.headH, '#2563eb', '#ffffff',
+    dates[0].toLocaleDateString('en-GB', { month: 'long' }), 700, 'left');
+  DAYS.forEach((day, i) => {
+    drawImageCell(ctx, L.cellX(i), headY, IMG.dayW, IMG.headH, '#2563eb', '#ffffff', day, 700, 'center');
+  });
+
+  // Date row
+  const dateY = headY + IMG.headH;
+  drawImageCell(ctx, 0, dateY, IMG.nameW, IMG.dateH, '#f0f0f0', '#374151', 'Date', 700, 'left');
+  dates.forEach((d, i) => {
+    drawImageCell(ctx, L.cellX(i), dateY, IMG.dayW, IMG.dateH, '#f0f0f0', '#374151', formatDateOrdinal(d), 700, 'center');
+  });
+
+  // People
+  TEAM.forEach((person, r) => {
+    const y = L.rowY(r);
+    drawImageCell(ctx, 0, y, IMG.nameW, IMG.rowH, '#ffffff', '#1f2937', person, 700, 'left');
+    for (let d = 0; d < 5; d++) {
+      const blocked = getBlockedStatus(dates[d]);
+      let label, bg, fg;
+      if (blocked) {
+        const info = closureInfo(blocked);
+        label = info.label; bg = info.bg; fg = info.fg;
+      } else {
+        const status = week[person][d];
+        const style = status ? getStatusStyle(status) : null;
+        label = status || '';
+        bg = style ? style.bg : '#ffffff';
+        fg = style ? style.fg : '#9ca3af';
+      }
+      drawImageCell(ctx, L.cellX(d), y, IMG.dayW, IMG.rowH, bg, fg, label, 600, 'center');
+    }
+  });
+
+  return canvas;
+}
+
+function copyTableImage() {
+  const btn = $('copyImageBtn');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Rendering…';   // PNG encoding takes a moment; say so
+
+  const canvas = buildTableImage();
+  const blobPromise = new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+
+  /* Hand ClipboardItem the promise rather than an awaited blob: that keeps the
+     write inside the user-gesture window, which Safari requires. */
+  const attempt = (navigator.clipboard && window.ClipboardItem)
+    ? navigator.clipboard.write([new ClipboardItem({ 'image/png': blobPromise })])
+        .then(() => { showToast('Image copied — paste straight into Teams'); return 'copied'; })
+    : Promise.reject(new Error('clipboard unsupported'));
+
+  return attempt
+    .catch(() => blobPromise.then(blob =>
+      blob ? downloadImage(blob) : (showToast('Could not render the image', true), 'failed')))
+    .finally(() => { btn.disabled = false; btn.innerHTML = original; });
+}
+
+/* If the clipboard is unavailable (older browser, or no window focus) save the
+   PNG instead, so the image can still be attached by hand. */
+function downloadImage(blob) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sitd-rota-${weekKey(currentMonday)}.png`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Clipboard unavailable — image downloaded instead');
+  return 'downloaded';
+}
+
 function buildTablePlain() {
   const dates = getWeekDates();
   const week = getWeekData();
@@ -2791,6 +2934,8 @@ $('copyTableBtn').addEventListener('click', async () => {
           : result === 'plain' ? 'Copied as plain text'
           : 'Could not copy — select the table and copy manually', !result);
 });
+
+$('copyImageBtn').addEventListener('click', copyTableImage);
 
 $('copySummaryBtn').addEventListener('click', async () => {
   const result = await copyToClipboard(buildSummaryPlain(), null);
