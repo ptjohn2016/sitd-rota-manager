@@ -543,6 +543,9 @@
     max-width: min(320px, calc(100vw - 24px));
     max-height: min(420px, calc(100vh - 24px));
     overflow-y: auto;
+    /* Stops the wheel handing off to the page at the end of the list, which
+       would scroll the page and close the menu. */
+    overscroll-behavior: contain;
   }
   .menu.open { display: block; }
 
@@ -1754,6 +1757,7 @@ function setMinOnsite(value) {
 
 let menuHandlers = [];
 let menuAnchor = null;
+let menuOpenWidth = null;   // viewport width when the menu opened; see resize handler
 
 function closeMenu(restoreFocus) {
   const menu = $('menu');
@@ -1766,6 +1770,7 @@ function closeMenu(restoreFocus) {
   }
   menuAnchor = null;
   menuHandlers = [];
+  menuOpenWidth = null;
 }
 
 /* sections: [{ header, items: [{ text, icon, swatch, muted, danger, checked, onSelect,
@@ -1873,6 +1878,7 @@ function openMenu(anchor, sections) {
   menu.classList.add('open');
   $('menuOverlay').classList.add('open');
   anchor.setAttribute('aria-expanded', 'true');
+  menuOpenWidth = window.innerWidth;
   positionMenu(anchor);
 
   const first = menu.querySelector('.menu-item[data-mi]');
@@ -1920,8 +1926,27 @@ $('menu').addEventListener('keydown', e => {
   items[next].focus();
 });
 
-window.addEventListener('resize', () => closeMenu(false));
-window.addEventListener('scroll', () => closeMenu(false), true);
+/* The menu is position:fixed, so it has to close when the page scrolls
+   underneath it or it drifts away from its button. This listener is on the
+   capture phase to catch scrolling in any container — which means it must
+   explicitly ignore scrolling *inside* the menu itself. */
+window.addEventListener('scroll', e => {
+  const menu = $('menu');
+  const target = e.target;
+  if (target === menu || (target && target.nodeType === 1 && menu.contains(target))) return;
+  closeMenu(false);
+}, true);
+
+/* Only a genuine width change should close the menu. On mobile, focusing the
+   custom-status field opens the virtual keyboard, which fires a resize with a
+   changed height — closing the menu out from under the user mid-type.
+   The baseline is captured when the menu opens, not at load: page load width
+   and post-render width differ once the scrollbar appears, which would make
+   the first resize of the session look like a real one. */
+window.addEventListener('resize', () => {
+  if (menuOpenWidth === null || window.innerWidth === menuOpenWidth) return;
+  closeMenu(false);
+});
 
 /* ── menu builders ── */
 
