@@ -3,30 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
 <title>SITD Team Rota Manager</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
-
   :root {
-    --bg: #f0f2f5;
     --glass: rgba(255, 255, 255, 0.62);
     --glass-strong: rgba(255, 255, 255, 0.78);
-    --glass-subtle: rgba(255, 255, 255, 0.35);
     --glass-border: rgba(255, 255, 255, 0.55);
     --glass-border-strong: rgba(255, 255, 255, 0.7);
+    --sticky: rgba(252, 252, 253, 0.92);
     --blur: 22px;
     --blur-strong: 30px;
-    --surface: rgba(255,255,255,0.85);
-    --surface-alt: rgba(248,249,251,0.6);
     --border: rgba(200, 200, 210, 0.35);
     --border-light: rgba(200, 200, 210, 0.2);
     --text: #2d3142;
-    --text-secondary: #6b7280;
-    --text-muted: #9ca3af;
+    --text-secondary: #5b6272;
+    --text-muted: #868d9b;
     --accent: #4f6df5;
     --accent-hover: #3b5bdb;
     --accent-light: rgba(79, 109, 245, 0.12);
+    --warn: #b45309;
+    --warn-bg: rgba(245, 158, 11, 0.16);
+    --danger: #b91c1c;
+    --danger-bg: rgba(220, 38, 38, 0.14);
+    --ok: #15803d;
+    --ok-bg: rgba(22, 163, 74, 0.14);
+    --page-tint: rgba(0, 0, 0, 0.05);
+    --field: rgba(255, 255, 255, 0.6);
+    --field-focus: rgba(255, 255, 255, 0.85);
+    --row-odd: rgba(255, 255, 255, 0.15);
+    --row-even: rgba(240, 242, 248, 0.25);
+    --row-hover: rgba(255, 255, 255, 0.35);
+    --head-bg: rgba(255, 255, 255, 0.35);
+    --toast-bg: #2d3142;
+    --toast-text: #fff;
     --radius: 10px;
     --radius-lg: 16px;
     --radius-xl: 20px;
@@ -35,30 +49,45 @@
     --shadow-lg: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04);
     --shadow-glass: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
     --transition: 180ms ease;
+  }
 
-    /* ── Status Palette (rich, saturated) ── */
-    --st-onsite:      #1a9a5a;
-    --st-onsite-text:  #fff;
-    --st-onsite-am:   #2db872;
-    --st-onsite-am-text: #fff;
-    --st-wfh:         #d4960a;
-    --st-wfh-text:    #fff;
-    --st-al:          #d63031;
-    --st-al-text:     #fff;
-    --st-sd:          #0891b2;
-    --st-sd-text:     #fff;
-    --st-sitd:        #7c3aed;
-    --st-sitd-text:   #fff;
-    --st-nwd:         #64748b;
-    --st-nwd-text:    #fff;
-    --st-blocked:     #334155;
-    --st-blocked-text:#fff;
+  :root[data-theme="dark"] {
+    --glass: rgba(24, 26, 34, 0.68);
+    --glass-strong: rgba(28, 31, 40, 0.82);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-border-strong: rgba(255, 255, 255, 0.18);
+    --sticky: rgba(26, 28, 36, 0.94);
+    --border: rgba(255, 255, 255, 0.14);
+    --border-light: rgba(255, 255, 255, 0.08);
+    --text: #eceef4;
+    --text-secondary: #b3b9c7;
+    --text-muted: #8b93a4;
+    --accent: #8ea3ff;
+    --accent-hover: #a5b6ff;
+    --accent-light: rgba(142, 163, 255, 0.16);
+    --warn: #fbbf24;
+    --warn-bg: rgba(245, 158, 11, 0.18);
+    --danger: #fca5a5;
+    --danger-bg: rgba(220, 38, 38, 0.22);
+    --ok: #86efac;
+    --ok-bg: rgba(22, 163, 74, 0.22);
+    --page-tint: rgba(10, 11, 16, 0.62);
+    --field: rgba(255, 255, 255, 0.07);
+    --field-focus: rgba(255, 255, 255, 0.12);
+    --row-odd: rgba(255, 255, 255, 0.03);
+    --row-even: rgba(255, 255, 255, 0.06);
+    --row-hover: rgba(255, 255, 255, 0.10);
+    --head-bg: rgba(255, 255, 255, 0.06);
+    --toast-bg: #f4f5f8;
+    --toast-text: #1c1f28;
+    --shadow-glass: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: #c4b5a0;
     color: var(--text);
     min-height: 100vh;
@@ -66,19 +95,22 @@
     overflow-x: hidden;
   }
 
+  /* Photo layer over a gradient, so a missing bg.png degrades to the gradient
+     rather than a flat tan block. */
   body::before {
     content: '';
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url('bg.png') center center / cover no-repeat fixed;
+    inset: 0;
+    background: url('bg.png') center center / cover no-repeat fixed,
+                linear-gradient(135deg, #d8cdbb, #b9c2c9);
     z-index: 0;
   }
 
   body::after {
     content: '';
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.05);
+    inset: 0;
+    background: var(--page-tint);
     z-index: 0;
   }
 
@@ -90,12 +122,23 @@
     padding: 28px 24px 52px;
   }
 
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
   /* ── HEADER ── */
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
     gap: 14px;
   }
@@ -104,8 +147,9 @@
     font-size: 26px;
     font-weight: 800;
     letter-spacing: -0.5px;
-    color: var(--text);
-    text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   .header-left p {
@@ -113,8 +157,42 @@
     font-size: 13.5px;
     font-weight: 500;
     margin-top: 2px;
-    text-shadow: 0 1px 1px rgba(255,255,255,0.2);
   }
+
+  .conn-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+    transition: background var(--transition);
+  }
+  .conn-dot.online { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+  .conn-dot.offline { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.2); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: var(--radius);
+    border: 1px solid var(--glass-border-strong);
+    background: var(--glass-strong);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 15px;
+    transition: all var(--transition);
+    box-shadow: var(--shadow-sm);
+  }
+  .icon-btn:hover { color: var(--accent); border-color: var(--accent); }
 
   /* ── WEEK NAV ── */
   .week-nav {
@@ -142,35 +220,26 @@
     cursor: pointer;
     color: var(--text-secondary);
     font-size: 14px;
+    font-family: inherit;
     transition: all var(--transition);
   }
 
-  .week-nav button:hover {
-    background: rgba(79, 109, 245, 0.1);
-    color: var(--accent);
-  }
+  .week-nav button:hover { background: var(--accent-light); color: var(--accent); }
 
   .week-nav .week-label {
     font-size: 14px;
     font-weight: 700;
-    min-width: 220px;
+    min-width: 210px;
     text-align: center;
     user-select: none;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    white-space: nowrap;
   }
 
-  .week-nav .week-label::before {
-    content: '';
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280' stroke-width='2'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E");
-    background-size: contain;
-    flex-shrink: 0;
-  }
+  .week-nav .week-label .cal-icon { flex-shrink: 0; opacity: 0.7; }
 
   .week-nav .today-btn {
     width: auto;
@@ -181,8 +250,72 @@
     letter-spacing: 0.2px;
   }
 
-  .week-nav .today-btn:hover {
+  .week-tag {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 5px;
     background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* ── INSIGHTS ── */
+  .insights {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .insight {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--glass-strong);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-secondary);
+  }
+  .insight.warn { background: var(--warn-bg); border-color: transparent; color: var(--warn); }
+  .insight.danger { background: var(--danger-bg); border-color: transparent; color: var(--danger); }
+  .insight.ok { background: var(--ok-bg); border-color: transparent; color: var(--ok); }
+
+  .insight-setting {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--glass-strong);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 4px 10px 4px 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .insight-setting input {
+    width: 46px;
+    padding: 3px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--field);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
   }
 
   /* ── ROTA TABLE ── */
@@ -197,8 +330,11 @@
     margin-bottom: 24px;
   }
 
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
   .rota-table {
     width: 100%;
+    min-width: 720px;
     border-collapse: collapse;
     table-layout: fixed;
   }
@@ -211,91 +347,115 @@
   }
 
   .rota-table thead th {
-    background: rgba(255,255,255,0.35);
-    padding: 12px 8px;
+    background: var(--head-bg);
+    padding: 10px 8px;
     font-weight: 700;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.6px;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border);
+    vertical-align: top;
   }
 
-  .rota-table thead th:first-child {
+  .rota-table thead th:first-child,
+  .rota-table tbody td:first-child,
+  .rota-table tfoot td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--sticky);
     text-align: left;
-    padding-left: 18px;
-    width: 140px;
+    width: 150px;
   }
+  .rota-table thead th:first-child { z-index: 3; padding-left: 16px; }
 
-  .rota-table thead th .day-name { display: block; font-weight: 700; color: var(--text); }
+  .day-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 4px 2px;
+    transition: background var(--transition);
+  }
+  .day-head:hover { background: var(--accent-light); }
 
-  .rota-table thead th .day-date {
-    display: block;
+  .day-head .day-name { font-weight: 700; color: var(--text); font-size: 12px; letter-spacing: 0.6px; }
+
+  .day-head .day-date {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 500;
-    color: var(--text);
-    margin-top: 2px;
+    color: var(--text-secondary);
+    text-transform: none;
   }
 
-  .rota-table thead th .day-blocked {
-    display: block;
+  .day-head .day-blocked {
     font-size: 9px;
     font-weight: 700;
-    color: #c53030;
-    margin-top: 2px;
+    color: var(--danger);
     text-transform: none;
     letter-spacing: 0;
+    line-height: 1.2;
   }
 
-  .rota-table tbody tr:last-child td { border-bottom: none; }
+  th.is-today .day-head .day-name,
+  th.is-today .day-head .day-date { color: var(--accent); }
+  th.is-today, td.is-today { background: var(--accent-light); }
+  th.is-today { box-shadow: inset 0 3px 0 var(--accent); }
 
-  .rota-table tbody tr {
-    transition: background var(--transition);
-  }
+  .rota-table tbody tr { transition: background var(--transition); }
+  .rota-table tbody tr:hover { background: var(--row-hover); }
+  .rota-table tbody tr:last-child td { border-bottom: 1px solid var(--border); }
 
-  .rota-table tbody tr:hover {
-    background: rgba(255,255,255,0.18);
-  }
+  .name-cell { padding: 8px 10px 8px 16px; }
 
-  .rota-table .name-cell {
-    text-align: left;
-    padding: 10px 14px 10px 18px;
-    font-weight: 600;
-    font-size: 13.5px;
-    border-right: 1px solid var(--border-light);
-  }
-
-  .name-inner {
+  .name-btn {
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 4px 6px;
+    text-align: left;
+    transition: all var(--transition);
   }
+  .name-btn:hover { background: var(--accent-light); border-color: var(--glass-border); }
+  .name-btn .name-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .avatar {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+    color: #64748b;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     overflow: hidden;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
   }
+  .avatar svg { width: 16px; height: 16px; }
 
-  .avatar svg {
-    width: 16px;
-    height: 16px;
-    color: #718096;
-  }
-
-  .rota-table .status-cell {
-    padding: 5px;
-    position: relative;
-    height: 48px;
-  }
+  .status-cell { padding: 5px; height: 48px; }
 
   /* ── STATUS BUTTONS ── */
   .status-btn {
@@ -304,7 +464,7 @@
     min-height: 38px;
     border: 2px solid transparent;
     border-radius: 8px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: inherit;
     font-size: 11.5px;
     font-weight: 600;
     cursor: pointer;
@@ -325,55 +485,50 @@
     transform: translateY(-1px);
   }
 
-  .status-btn .chip-icon {
-    font-size: 13px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
+  .status-btn .chip-icon { font-size: 13px; line-height: 1; flex-shrink: 0; }
+  .status-btn .chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .status-btn.empty {
-    background: rgba(255,255,255,0.4);
+    background: var(--field);
     color: var(--text-muted);
-    border: 2px dashed rgba(180,180,190,0.4);
+    border: 2px dashed var(--border);
     box-shadow: none;
   }
-
-  .status-btn.empty:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-light);
-  }
+  .status-btn.empty:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 
   .status-btn.blocked {
-    cursor: not-allowed;
-    opacity: 0.85;
-    background: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 3px,
-      rgba(0,0,0,0.04) 3px,
-      rgba(0,0,0,0.04) 6px
-    );
+    cursor: default;
+    opacity: 0.9;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 6px);
   }
+  .status-btn.blocked:hover { filter: none; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transform: none; }
 
-  .status-btn.blocked:hover {
-    filter: none;
-    border-color: transparent;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    transform: none;
+  /* ── COVERAGE FOOTER ── */
+  .rota-table tfoot td {
+    padding: 8px 4px;
+    background: var(--head-bg);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border);
+    border-bottom: none;
   }
-
-  /* ── DROPDOWN ── */
-  .dropdown-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 99;
+  .rota-table tfoot td:first-child {
+    padding-left: 16px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
   }
+  .cover-counts { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .cover-counts span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+  .cover-counts .low { color: var(--danger); font-weight: 800; }
 
-  .dropdown-overlay.open { display: block; }
+  /* ── MENU ── */
+  .menu-overlay { display: none; position: fixed; inset: 0; z-index: 99; }
+  .menu-overlay.open { display: block; }
 
-  .dropdown {
+  .menu {
     display: none;
     position: fixed;
     z-index: 100;
@@ -384,14 +539,14 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     padding: 4px;
-    min-width: 210px;
-    max-height: 340px;
+    min-width: 224px;
+    max-width: min(320px, calc(100vw - 24px));
+    max-height: min(420px, calc(100vh - 24px));
     overflow-y: auto;
   }
+  .menu.open { display: block; }
 
-  .dropdown.open { display: block; }
-
-  .dropdown-section {
+  .menu-header {
     padding: 6px 10px 2px;
     font-size: 10px;
     font-weight: 700;
@@ -400,62 +555,63 @@
     color: var(--text-muted);
     margin-top: 4px;
   }
+  .menu-header:first-child { margin-top: 0; }
 
-  .dropdown-section:first-child { margin-top: 0; }
-
-  .dropdown-item {
+  .menu-item {
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 100%;
     padding: 8px 10px;
+    border: none;
+    background: transparent;
     border-radius: 8px;
     cursor: pointer;
+    font-family: inherit;
     font-size: 13px;
     font-weight: 500;
+    color: var(--text);
+    text-align: left;
     transition: background var(--transition);
   }
-
-  .dropdown-item:hover { background: rgba(79, 109, 245, 0.08); }
-
-  .dropdown-item .swatch {
-    width: 14px;
-    height: 14px;
+  .menu-item:hover, .menu-item:focus-visible { background: var(--accent-light); }
+  .menu-item .swatch {
+    width: 14px; height: 14px;
     border-radius: 5px;
     flex-shrink: 0;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
+  .menu-item .mi-icon { flex-shrink: 0; }
+  .menu-item .mi-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .menu-item.muted { color: var(--text-muted); font-style: italic; }
+  .menu-item.danger { color: var(--danger); }
+  .menu-item[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+  .menu-item.checked .mi-text::after { content: ' ✓'; color: var(--accent); font-weight: 800; }
 
-  .dropdown-item.clear-item {
+  .menu-divider { height: 1px; background: var(--border-light); margin: 4px 0; }
+
+  .menu-note {
+    padding: 6px 10px 8px;
+    font-size: 11px;
     color: var(--text-muted);
-    font-style: italic;
+    line-height: 1.4;
   }
 
-  .dropdown-divider {
-    height: 1px;
-    background: var(--border-light);
-    margin: 4px 0;
-  }
-
-  .dropdown .custom-input-row {
-    display: flex;
-    gap: 4px;
-    padding: 4px 4px;
-  }
-
-  .dropdown .custom-input-row input {
+  .menu-input-row { display: flex; gap: 4px; padding: 4px; }
+  .menu-input-row input {
     flex: 1;
+    min-width: 0;
     padding: 7px 10px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: inherit;
     font-size: 12px;
     outline: none;
-    background: rgba(255,255,255,0.7);
+    background: var(--field);
+    color: var(--text);
   }
-
-  .dropdown .custom-input-row input:focus { border-color: var(--accent); }
-
-  .dropdown .custom-input-row button {
+  .menu-input-row input:focus { border-color: var(--accent); background: var(--field-focus); }
+  .menu-input-row button {
     padding: 7px 12px;
     border: none;
     background: var(--accent);
@@ -464,10 +620,26 @@
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: inherit;
   }
 
-  /* ── ACTION BAR (inside rota card) ── */
+  .mi-actions { display: flex; align-items: center; gap: 2px; padding-right: 4px; }
+  .mi-action {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.55;
+    font-size: 12px;
+    padding: 4px;
+    border-radius: 6px;
+    line-height: 1;
+    color: var(--text);
+  }
+  .mi-action:hover { opacity: 1; background: var(--accent-light); }
+  .menu-row { display: flex; align-items: center; }
+  .menu-row .menu-item { flex: 1; min-width: 0; }
+
+  /* ── ACTION BAR ── */
   .rota-footer {
     display: flex;
     align-items: center;
@@ -475,16 +647,10 @@
     flex-wrap: wrap;
     padding: 12px 16px;
     border-top: 1px solid var(--border);
-    background: rgba(255,255,255,0.25);
+    background: var(--head-bg);
   }
 
-  .actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-    flex: 1;
-  }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: 1; }
 
   .btn {
     display: inline-flex;
@@ -492,9 +658,9 @@
     gap: 6px;
     padding: 7px 14px;
     border: 1px solid var(--glass-border);
-    background: rgba(255,255,255,0.55);
+    background: var(--glass-strong);
     border-radius: 8px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: inherit;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -503,13 +669,14 @@
     box-shadow: var(--shadow-sm);
   }
 
-  .btn:hover {
-    background: rgba(255,255,255,0.8);
+  .btn:hover:not(:disabled) {
     box-shadow: var(--shadow);
     transform: translateY(-1px);
-    border-color: rgba(79,109,245,0.3);
+    border-color: var(--accent);
     color: var(--accent);
   }
+
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
   .btn-primary {
     background: var(--accent);
@@ -517,15 +684,14 @@
     border-color: var(--accent);
     box-shadow: 0 2px 8px rgba(79, 109, 245, 0.2);
   }
-
-  .btn-primary:hover {
+  .btn-primary:hover:not(:disabled) {
     background: var(--accent-hover);
     border-color: var(--accent-hover);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(79, 109, 245, 0.3);
   }
+  .btn-danger:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); }
 
-  .btn svg { width: 14px; height: 14px; }
+  .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
   .update-meta {
     margin-left: auto;
@@ -551,42 +717,45 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
     padding: 14px 18px;
     border-bottom: 1px solid var(--border-light);
-    background: rgba(255,255,255,0.25);
+    background: var(--head-bg);
   }
 
   .summary-header h2 { font-size: 15px; font-weight: 700; }
 
-  .summary-body { padding: 0; }
+  .summary-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-  .summary-intro {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border-light);
+  .summary-controls label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
   }
+
+  .summary-intro { padding: 14px 18px; border-bottom: 1px solid var(--border-light); }
 
   .summary-intro textarea {
     width: 100%;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 10px 12px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: inherit;
     font-size: 13px;
     line-height: 1.5;
     resize: vertical;
-    min-height: 40px;
+    min-height: 42px;
     outline: none;
     color: var(--text);
-    background: rgba(255,255,255,0.5);
+    background: var(--field);
   }
-
-  .summary-intro textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.75); }
-
-  .summary-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+  .summary-intro textarea:focus { border-color: var(--accent); background: var(--field-focus); }
 
   .summary-row {
     display: flex;
@@ -597,41 +766,25 @@
     min-height: 48px;
     transition: background var(--transition);
   }
-
   .summary-row:last-child { border-bottom: none; }
+  .summary-row:nth-child(odd) { background: var(--row-odd); }
+  .summary-row:nth-child(even) { background: var(--row-even); }
+  .summary-row:hover { background: var(--row-hover); }
 
-  .summary-row:nth-child(odd) {
-    background: rgba(255,255,255,0.15);
-  }
-
-  .summary-row:nth-child(even) {
-    background: rgba(240,242,248,0.25);
-  }
-
-  .summary-row:hover {
-    background: rgba(255,255,255,0.35);
-  }
-
-  .summary-row .avatar {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-  }
+  .summary-row .avatar { width: 32px; height: 32px; }
 
   .summary-row .person-name {
     font-weight: 700;
     font-size: 13.5px;
     min-width: 68px;
+    max-width: 110px;
     flex-shrink: 0;
-    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .summary-row .summary-divider {
-    width: 1px;
-    height: 24px;
-    background: var(--border);
-    flex-shrink: 0;
-  }
+  .summary-row .summary-divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
 
   .summary-row .summary-content {
     flex: 1;
@@ -653,27 +806,16 @@
     flex-shrink: 0;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
-
-  .summary-badge .badge-icon {
-    font-size: 13px;
-    line-height: 1;
-  }
-
-  .summary-detail-text {
-    font-size: 13px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .summary-badge .badge-icon { font-size: 13px; line-height: 1; }
+  .summary-badge:empty { display: none; }
 
   .summary-row textarea {
     flex: 1;
+    min-width: 0;
     border: 1px solid transparent;
     border-radius: var(--radius);
     padding: 5px 8px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: inherit;
     font-size: 13px;
     line-height: 1.4;
     resize: none;
@@ -682,32 +824,29 @@
     color: var(--text);
     min-height: 28px;
     overflow: hidden;
-    -moz-appearance: textfield;
-    appearance: textfield;
   }
-
-  .summary-row textarea::-webkit-inner-spin-button,
-  .summary-row textarea::-webkit-outer-spin-button,
-  .summary-row textarea::-webkit-resizer {
-    display: none;
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  .summary-intro textarea::-webkit-resizer {
-    display: none;
-  }
-
+  .summary-row textarea::placeholder { color: var(--text-muted); font-style: italic; }
   .summary-row textarea:hover { border-color: var(--border); }
-  .summary-row textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.5); }
+  .summary-row textarea:focus { border-color: var(--accent); background: var(--field-focus); }
 
-  .summary-row.team-wide {
-    background: rgba(79, 109, 245, 0.06);
+  .summary-row .reset-note {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-family: inherit;
+    font-weight: 600;
+    padding: 4px 6px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
+  .summary-row .reset-note:hover { color: var(--accent); background: var(--accent-light); }
+  .summary-row .reset-note[hidden] { display: none; }
 
-  .summary-row.team-wide .person-name {
-    color: var(--accent);
-  }
+  .summary-row.team-wide { background: var(--accent-light); }
+  .summary-row.team-wide .person-name { color: var(--accent); }
 
   .summary-footer {
     padding: 8px 18px;
@@ -716,7 +855,7 @@
     color: var(--text-muted);
     font-weight: 500;
     border-top: 1px solid var(--border-light);
-    background: rgba(255,255,255,0.15);
+    background: var(--head-bg);
   }
 
   /* ── TOAST ── */
@@ -725,8 +864,8 @@
     bottom: 28px;
     left: 50%;
     transform: translateX(-50%) translateY(80px);
-    background: var(--text);
-    color: #fff;
+    background: var(--toast-bg);
+    color: var(--toast-text);
     padding: 11px 24px;
     border-radius: var(--radius-lg);
     font-size: 13px;
@@ -736,37 +875,41 @@
     opacity: 0;
     z-index: 200;
     pointer-events: none;
-    backdrop-filter: blur(10px);
+    max-width: calc(100vw - 32px);
+    text-align: center;
   }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.error { background: #b91c1c; color: #fff; }
 
-  .toast.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-
-  /* ── LOGIN OVERLAY ── */
-  #loginOverlay {
+  /* ── LOGIN ── */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,30,40,0.45);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
   }
+  .login-overlay[hidden] { display: none; }
 
   .login-card {
     background: var(--glass-strong);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
-    padding: 36px 32px;
+    padding: 32px;
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-lg);
     text-align: center;
     border: 1px solid var(--glass-border);
-    min-width: 300px;
+    width: 100%;
+    max-width: 340px;
   }
 
-  .login-card h2 {
-    font-weight: 800;
-    font-size: 20px;
-    margin-bottom: 18px;
-  }
+  .login-card h2 { font-weight: 800; font-size: 20px; margin-bottom: 18px; }
 
   .login-card input {
     padding: 11px 14px;
@@ -774,107 +917,173 @@
     width: 100%;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: inherit;
     font-size: 13.5px;
-    background: rgba(255,255,255,0.6);
+    background: var(--field);
+    color: var(--text);
     outline: none;
     transition: border-color var(--transition);
   }
-
   .login-card input:focus { border-color: var(--accent); }
 
+  .login-error {
+    color: var(--danger);
+    font-size: 12px;
+    font-weight: 600;
+    min-height: 16px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
   /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .app { padding: 12px 8px 32px; }
-    .header { flex-direction: column; align-items: flex-start; }
-    .rota-table .name-cell { padding: 6px 8px; font-size: 12px; }
-    .rota-table thead th:first-child { width: 100px; padding-left: 10px; }
-    .status-btn { font-size: 10px; }
-    .avatar { width: 24px; height: 24px; }
+  @media (max-width: 860px) {
+    .app { padding: 14px 10px 32px; }
+    .header { flex-direction: column; align-items: stretch; }
+    .header-right { justify-content: space-between; }
+    .week-nav { justify-content: center; }
+    .week-nav .week-label { min-width: 0; flex: 1; font-size: 13px; }
+    .rota-table thead th:first-child,
+    .rota-table tbody td:first-child,
+    .rota-table tfoot td:first-child { width: 116px; }
+    .name-cell { padding: 6px 6px 6px 10px; }
+    .name-btn { font-size: 12px; gap: 6px; }
+    .avatar { width: 24px; height: 24px; font-size: 10px; }
     .avatar svg { width: 12px; height: 12px; }
-    .name-inner { gap: 6px; }
     .rota-footer { flex-direction: column; align-items: stretch; }
     .actions { justify-content: center; }
     .update-meta { text-align: center; margin-left: 0; }
     .btn { font-size: 11px; padding: 6px 10px; }
+    .insight-setting { margin-left: 0; }
     .summary-row { padding: 8px 12px; gap: 8px; flex-wrap: wrap; }
     .summary-row .avatar { width: 24px; height: 24px; }
-    .summary-row .summary-content { flex-basis: 100%; margin-left: 36px; gap: 6px; flex-wrap: wrap; }
-    .summary-divider { display: none; }
+    .summary-row .summary-content { flex-basis: 100%; margin-left: 32px; gap: 6px; flex-wrap: wrap; }
+    .summary-row .summary-divider { display: none; }
     .summary-badge { font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+    .status-btn:hover, .btn:hover { transform: none; }
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; }
+    body::before, body::after { display: none; }
+    .app { max-width: none; padding: 0; }
+    .header-right, .rota-footer, .insight-setting, .summary-controls,
+    .menu, .menu-overlay, .toast, .login-overlay { display: none !important; }
+    .rota-wrapper, .summary-panel {
+      background: #fff;
+      border: 1px solid #ccc;
+      box-shadow: none;
+      backdrop-filter: none;
+      break-inside: avoid;
+    }
+    .table-scroll { overflow: visible; }
+    .rota-table { min-width: 0; }
+    .status-btn { box-shadow: none; border: none; }
+    .summary-row textarea { border: none; }
   }
 </style>
 </head>
 <body>
-  <div id="loginOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(30,30,40,0.45);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
-    <div class="login-card">
+  <div class="login-overlay" id="loginOverlay" hidden>
+    <form class="login-card" id="loginForm" autocomplete="on">
       <h2>Team Rota Login</h2>
-      <input type="email" id="emailInput" placeholder="Email">
-      <input type="password" id="passwordInput" placeholder="Password" style="margin-bottom:18px;">
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="login()">Unlock Rota</button>
-    </div>
+      <input type="email" id="emailInput" placeholder="Email" autocomplete="username" required>
+      <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" required>
+      <p class="login-error" id="loginError" role="alert"></p>
+      <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;">Unlock Rota</button>
+    </form>
   </div>
 
   <div class="app">
     <div class="header">
       <div class="header-left">
-        <h1>SITD Rota Manager</h1>
-        <p>Team working pattern planner</p>
+        <h1>
+          SITD Rota Manager
+          <span class="conn-dot" id="connDot" title="Connecting…" role="status" aria-label="Connection status"></span>
+        </h1>
+        <p id="signedInAs">Team working pattern planner</p>
       </div>
-      <div class="week-nav">
-        <button onclick="changeWeek(-1)" title="Previous week">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button class="today-btn" onclick="goToday()">Today</button>
-        <span class="week-label" id="weekLabel"></span>
-        <button onclick="changeWeek(1)" title="Next week">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <div class="header-right">
+        <div class="week-nav">
+          <button type="button" id="prevWeek" title="Previous week (←)" aria-label="Previous week">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button type="button" class="today-btn" id="todayBtn" title="Jump to this week (T)">Today</button>
+          <span class="week-label" id="weekLabel" aria-live="polite">
+            <svg class="cal-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span id="weekLabelText"></span>
+          </span>
+          <button type="button" id="nextWeek" title="Next week (→)" aria-label="Next week">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <button type="button" class="icon-btn" id="themeBtn" title="Switch theme" aria-label="Switch theme">◐</button>
+        <button type="button" class="icon-btn" id="signOutBtn" title="Sign out" aria-label="Sign out">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
     </div>
 
+    <div class="insights" id="insights"></div>
+
     <div class="rota-wrapper">
-      <table class="rota-table" id="rotaTable">
-        <thead id="rotaHead"></thead>
-        <tbody id="rotaBody"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="rota-table" id="rotaTable">
+          <thead id="rotaHead"></thead>
+          <tbody id="rotaBody"></tbody>
+          <tfoot id="rotaFoot"></tfoot>
+        </table>
+      </div>
       <div class="rota-footer">
         <div class="actions">
-          <button class="btn btn-primary" onclick="copyTableHTML()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <button type="button" class="btn btn-primary" id="copyTableBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             Copy Rota Table
           </button>
-          <button class="btn btn-primary" onclick="copySummaryText()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <button type="button" class="btn btn-primary" id="copySummaryBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             Copy Summary for Teams
           </button>
-          <button class="btn" onclick="copyPreviousWeek()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-8.36L1 10"/></svg>
+          <button type="button" class="btn" id="copyPrevBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-8.36L1 10"/></svg>
             Copy Previous Week
           </button>
-          <button class="btn" onclick="clearWeek()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6h12z"/></svg>
+          <button type="button" class="btn" id="undoBtn" disabled title="Undo (Ctrl+Z)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/></svg>
+            Undo
+          </button>
+          <button type="button" class="btn btn-danger" id="clearWeekBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6h12z"/></svg>
             Clear Week
           </button>
+          <button type="button" class="btn" id="exportBtn" title="Download a JSON backup of all rota data">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+          </button>
         </div>
-        <span class="update-meta" id="updateMeta">Loading...</span>
+        <span class="update-meta" id="updateMeta">Loading…</span>
       </div>
     </div>
 
     <div class="summary-panel">
       <div class="summary-header">
         <h2>Teams Message Summary</h2>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer;user-select:none;">
-            <input type="checkbox" id="showAllEvents" onchange="generateSummaries()" style="cursor:pointer;">
+        <div class="summary-controls">
+          <label>
+            <input type="checkbox" id="showAllEvents">
             Include routine events
           </label>
-          <button class="btn" onclick="regenerateSummaries()" style="padding:6px 12px;font-size:12px;">↻ Regenerate</button>
+          <button type="button" class="btn" id="regenBtn" style="padding:6px 12px;">↻ Reset edits</button>
         </div>
       </div>
       <div class="summary-body">
         <div class="summary-intro">
-          <textarea id="summaryIntro" rows="2" placeholder="Intro message (e.g. 'Everyone - please see below for next weeks rota')"></textarea>
+          <label class="sr-only" for="summaryIntro">Intro message</label>
+          <textarea id="summaryIntro" rows="2" placeholder="Intro message"></textarea>
         </div>
         <div id="summaryTeamWide"></div>
         <div id="summaryItems"></div>
@@ -883,51 +1092,66 @@
     </div>
   </div>
 
-  <div class="dropdown-overlay" id="dropdownOverlay" onclick="closeDropdown()"></div>
-  <div class="dropdown" id="dropdown"></div>
-  <div class="toast" id="toast"></div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <div class="menu" id="menu" role="menu" aria-label="Options"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 
 <script>
-// ── CONFIG ──
-const TEAM = ['Mike', 'John', 'Scott', 'Paige', 'Graham', 'Aaron', 'Chris'];
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════
+   1. CONFIG
+   ══════════════════════════════════════════════════════════════ */
+
+const DEFAULT_TEAM = ['Mike', 'John', 'Scott', 'Paige', 'Graham', 'Aaron', 'Chris'];
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const DAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+const DEFAULT_MIN_ONSITE = 2;
 
+/* Colours live here as hex only. The old build kept CSS vars here *and* a
+   duplicate hex map for the clipboard, which drifted apart. One source now. */
 const STATUSES = {
-  'On-site (Full)': { bg: 'var(--st-onsite)',    text: 'var(--st-onsite-text)',    group: 'location',   icon: '🏢' },
-  'On-site (AM)':   { bg: 'var(--st-onsite-am)', text: 'var(--st-onsite-am-text)', group: 'location',   icon: '🏢' },
-  'On-site (PM)':   { bg: 'var(--st-onsite-am)', text: 'var(--st-onsite-am-text)', group: 'location',   icon: '🏢' },
-  'WFH':            { bg: 'var(--st-wfh)',        text: 'var(--st-wfh-text)',       group: 'location',   icon: '🏠' },
-  'AL':             { bg: 'var(--st-al)',         text: 'var(--st-al-text)',        group: 'leave',      icon: '🏖️' },
-  'AL (AM)':        { bg: 'var(--st-al)',         text: 'var(--st-al-text)',        group: 'leave',      icon: '🏖️' },
-  'AL (PM)':        { bg: 'var(--st-al)',         text: 'var(--st-al-text)',        group: 'leave',      icon: '🏖️' },
-  'SD':             { bg: 'var(--st-sd)',         text: 'var(--st-sd-text)',        group: 'assignment', icon: '🎧' },
-  'SITD':           { bg: 'var(--st-sitd)',       text: 'var(--st-sitd-text)',      group: 'assignment', icon: '⏱️' },
-  'Non-Working Day':{ bg: 'var(--st-nwd)',        text: 'var(--st-nwd-text)',       group: 'other',      icon: '🚫' },
+  'On-site (Full)': { bg: '#1a9a5a', fg: '#fff', group: 'Location',   icon: '🏢', long: 'On-site (Full)' },
+  'On-site (AM)':   { bg: '#2db872', fg: '#fff', group: 'Location',   icon: '🏢', long: 'On-site (AM)' },
+  'On-site (PM)':   { bg: '#127a4a', fg: '#fff', group: 'Location',   icon: '🏢', long: 'On-site (PM)' },
+  'WFH':            { bg: '#d4960a', fg: '#fff', group: 'Location',   icon: '🏠', long: 'WFH' },
+  'AL':             { bg: '#d63031', fg: '#fff', group: 'Leave',      icon: '🏖️', long: 'Annual Leave (AL)' },
+  'AL (AM)':        { bg: '#e2605f', fg: '#fff', group: 'Leave',      icon: '🏖️', long: 'Annual Leave (AM)' },
+  'AL (PM)':        { bg: '#a71f20', fg: '#fff', group: 'Leave',      icon: '🏖️', long: 'Annual Leave (PM)' },
+  'Sick':           { bg: '#9d174d', fg: '#fff', group: 'Leave',      icon: '🤒', long: 'Off sick' },
+  'SD':             { bg: '#0891b2', fg: '#fff', group: 'Assignment', icon: '🎧', long: 'Service Desk' },
+  'SITD':           { bg: '#7c3aed', fg: '#fff', group: 'Assignment', icon: '⏱️', long: 'SITD' },
+  'Training':       { bg: '#1d4ed8', fg: '#fff', group: 'Assignment', icon: '📚', long: 'Training' },
+  'Non-Working Day':{ bg: '#64748b', fg: '#fff', group: 'Other',      icon: '🚫', long: 'Non-Working Day' },
 };
 
-// Blocked day statuses (not user-selectable, auto-applied)
-const BLOCKED_STATUSES = {
-  'PH':                 { bg: '#2d3748', text: '#fff', label: 'Public Holiday' },
-  'CD':                 { bg: '#4a5568', text: '#fff', label: 'Closure Day' },
-  'PR':                 { bg: '#4a5568', text: '#fff', label: 'Privilege Day' },
-  '0.5 PR and 0.5 CD': { bg: '#4a5568', text: '#fff', label: '0.5 Privilege Day + 0.5 Closure Day' },
-};
+const STATUS_GROUPS = ['Location', 'Leave', 'Assignment', 'Other'];
+const CUSTOM_STYLE = { bg: '#ec4899', fg: '#fff', icon: '📌' };
 
-// ── NOC SOUTHAMPTON BLOCKED DATES 2026 ──
-const NOC_BLOCKED_DATES = {
-  '2026-01-01': 'PH',
-  '2026-04-03': 'PH',
-  '2026-04-06': 'PH',
-  '2026-05-04': 'PH',
-  '2026-05-25': 'PH',
-  '2026-08-31': 'PH',
-  '2026-12-25': 'PH',
-  '2026-12-28': 'PH',
+/* Reserved summaryNotes keys for the intro line and the team-wide row.
+   Declared up here because render() can run before the rest of the script
+   has finished evaluating, if the auth callback fires synchronously. */
+const INTRO_KEY = '__intro';
+const EVERYONE_KEY = '__everyone';
+
+/* Closure codes. Keys are stored in Firebase, so the awkward legacy
+   '0.5 PR and 0.5 CD' key is kept verbatim for backwards compatibility. */
+const CLOSURE_CODES = {
+  'PH':                { short: 'PH',       label: 'Public Holiday',            bg: '#2d3748', fg: '#fff' },
+  'CD':                { short: 'CD',       label: 'Closure Day',               bg: '#4a5568', fg: '#fff' },
+  'PR':                { short: 'PR',       label: 'Privilege Day',             bg: '#4a5568', fg: '#fff' },
+  '0.5 PR and 0.5 CD': { short: '½PR+½CD',  label: '½ Privilege + ½ Closure',   bg: '#4a5568', fg: '#fff' },
+};
+const CLEARED = 'NONE'; // sentinel: an override that un-blocks a built-in closure
+
+/* NOC Southampton non-public-holiday closures. Public holidays are computed,
+   so only the site-specific days need listing here; anything else can be added
+   in-app from the day header menu (stored in Firebase, so it syncs to the team). */
+const NOC_CLOSURES = {
   '2026-04-02': '0.5 PR and 0.5 CD',
   '2026-04-07': 'PR',
   '2026-12-24': 'PR',
@@ -936,113 +1160,6 @@ const NOC_BLOCKED_DATES = {
   '2026-12-31': 'CD',
 };
 
-function getUKPublicHolidays(year) {
-  const holidays = {};
-  let nyd = new Date(year, 0, 1);
-  if (nyd.getDay() === 0) nyd = new Date(year, 0, 2);
-  if (nyd.getDay() === 6) nyd = new Date(year, 0, 3);
-  holidays[dateKey(nyd)] = 'PH';
-
-  const a = year % 19;
-  const b = Math.floor(year / 100);
-  const c = year % 100;
-  const d = Math.floor(b / 4);
-  const e = b % 4;
-  const f = Math.floor((b + 8) / 25);
-  const g = Math.floor((b - f + 1) / 3);
-  const h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4);
-  const k = c % 4;
-  const l = (32 + 2 * e + 2 * i - h - k) % 7;
-  const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const month = Math.floor((h + l - 7 * m + 114) / 31) - 1;
-  const day = ((h + l - 7 * m + 114) % 31) + 1;
-  const easter = new Date(year, month, day);
-
-  const goodFriday = new Date(easter);
-  goodFriday.setDate(easter.getDate() - 2);
-  holidays[dateKey(goodFriday)] = 'PH';
-
-  const easterMon = new Date(easter);
-  easterMon.setDate(easter.getDate() + 1);
-  holidays[dateKey(easterMon)] = 'PH';
-
-  for (let d = 1; d <= 7; d++) {
-    const dt = new Date(year, 4, d);
-    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
-  }
-
-  for (let d = 31; d >= 25; d--) {
-    const dt = new Date(year, 4, d);
-    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
-  }
-
-  for (let d = 31; d >= 25; d--) {
-    const dt = new Date(year, 7, d);
-    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
-  }
-
-  let xmas = new Date(year, 11, 25);
-  if (xmas.getDay() === 0) xmas = new Date(year, 11, 27);
-  if (xmas.getDay() === 6) xmas = new Date(year, 11, 27);
-  holidays[dateKey(xmas)] = 'PH';
-
-  let boxing = new Date(year, 11, 26);
-  if (boxing.getDay() === 0) boxing = new Date(year, 11, 28);
-  if (boxing.getDay() === 6) boxing = new Date(year, 11, 28);
-  if (dateKey(boxing) === dateKey(xmas)) {
-    boxing.setDate(boxing.getDate() + 1);
-  }
-  holidays[dateKey(boxing)] = 'PH';
-
-  return holidays;
-}
-
-function getBlockedStatus(date) {
-  const key = dateKey(date);
-  const year = date.getFullYear();
-  if (NOC_BLOCKED_DATES[key]) return NOC_BLOCKED_DATES[key];
-  const phDates = getUKPublicHolidays(year);
-  if (phDates[key]) return phDates[key];
-  const dow = date.getDay();
-  if (dow === 0 || dow === 6) return 'PH';
-  return null;
-}
-
-function dateKey(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${dd}`;
-}
-
-let customStatuses = {};
-
-function getStatusStyle(status) {
-  if (STATUSES[status]) return STATUSES[status];
-  if (BLOCKED_STATUSES[status]) return { bg: BLOCKED_STATUSES[status].bg, text: BLOCKED_STATUSES[status].text };
-  if (customStatuses[status]) return customStatuses[status];
-  return { bg: '#ec4899', text: '#fff', group: 'custom', icon: '📌' };
-}
-
-// ── STATE ──
-let currentMonday = getMonday(new Date());
-let rotaData = {};
-
-function getMonday(d) {
-  const date = new Date(d);
-  const day = date.getDay();
-  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-  date.setDate(diff);
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
-
-function weekKey(monday) {
-  return monday.toISOString().slice(0, 10);
-}
-
-// ── FIREBASE SETUP ──
 const firebaseConfig = {
   apiKey: "AIzaSyA2kCvLQc2dBWlYmNd65BdZ7DVGRZeywJI",
   authDomain: "sitd-rota-manager.firebaseapp.com",
@@ -1053,869 +1170,1282 @@ const firebaseConfig = {
   appId: "1:231353000923:web:1203b2e3bb7c4d3dfe7dfe"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const auth = firebase.auth();
+/* ══════════════════════════════════════════════════════════════
+   2. SMALL UTILITIES
+   ══════════════════════════════════════════════════════════════ */
 
-function login() {
-  const email = document.getElementById('emailInput').value;
-  const password = document.getElementById('passwordInput').value;
-  auth.signInWithEmailAndPassword(email, password)
-    .catch((error) => alert("Login failed: " + error.message));
+const $ = id => document.getElementById(id);
+
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-let lastUpdatedTime = null;
+function addDays(date, n) { const d = new Date(date); d.setDate(d.getDate() + n); return d; }
+function isWeekend(date) { const w = date.getDay(); return w === 0 || w === 6; }
 
-function saveLastUpdated() {
-  db.ref('teamRota/lastUpdated').set(Date.now());
+/* Local-date key. The old weekKey() used toISOString(), which converts local
+   midnight to UTC — during BST every Monday came back as the previous Sunday,
+   so summer weeks were filed under the wrong key. */
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+const weekKey = dateKey;
+function legacyWeekKey(monday) { return monday.toISOString().slice(0, 10); }
+
+function getMonday(d) {
+  const date = new Date(d);
+  const day = date.getDay();
+  date.setDate(date.getDate() - day + (day === 0 ? -6 : 1));
+  date.setHours(0, 0, 0, 0);
+  return date;
 }
 
-function updateMetaDisplay() {
-  const el = document.getElementById('updateMeta');
-  if (!lastUpdatedTime) { el.textContent = ''; return; }
-  const now = new Date();
-  const diff = Math.floor((now - lastUpdatedTime) / 1000);
-  if (diff < 10) el.textContent = 'Updated just now';
-  else if (diff < 60) el.textContent = `Updated ${diff}s ago`;
-  else if (diff < 3600) {
-    const mins = Math.floor(diff / 60);
-    el.textContent = `Updated ${mins} min${mins > 1 ? 's' : ''} ago`;
-  } else if (diff < 86400) {
-    const hrs = Math.floor(diff / 3600);
-    el.textContent = `Updated ${hrs} hour${hrs > 1 ? 's' : ''} ago`;
-  } else {
-    const days = Math.floor(diff / 86400);
-    el.textContent = `Updated ${days} day${days > 1 ? 's' : ''} ago`;
-  }
-}
+function startOfDay(d) { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
+function daysBetween(a, b) { return Math.round((startOfDay(b) - startOfDay(a)) / 86400000); }
 
-// Tick the "updated X ago" every 15s
-setInterval(updateMetaDisplay, 15000);
-
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    document.getElementById('loginOverlay').style.display = 'none';
-    db.ref('teamRota').on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        rotaData = data.rotaData || {};
-        customStatuses = data.customStatuses || {};
-        if (data.lastUpdated) {
-          lastUpdatedTime = new Date(data.lastUpdated);
-          updateMetaDisplay();
-        }
-      } else {
-        rotaData = {};
-        customStatuses = {};
-      }
-      render();
-    });
-  } else {
-    document.getElementById('loginOverlay').style.display = 'flex';
-    db.ref('teamRota').off('value');
-  }
-});
-
-function getWeekData() {
-    const key = weekKey(currentMonday);
-    if (!rotaData[key]) {
-      rotaData[key] = {};
-    }
-    // Always backfill missing team members (fixes Firebase partial-data race)
-    TEAM.forEach(name => {
-      if (!rotaData[key][name] || !Array.isArray(rotaData[key][name])) {
-        rotaData[key][name] = ['', '', '', '', ''];
-      }
-    });
-    return rotaData[key];
-  }
-
-function setStatus(person, dayIndex, status) {
-    const key = weekKey(currentMonday);
-    const week = getWeekData();
-    week[person][dayIndex] = status;
-    // Write full week to prevent partial-data race condition
-    db.ref(`teamRota/rotaData/${key}`).set(week);
-    saveLastUpdated();
-    renderTable();
-    generateSummaries();
-  }
-
-// ── WEEK NAV ──
-function changeWeek(delta) {
-  currentMonday = new Date(currentMonday);
-  currentMonday.setDate(currentMonday.getDate() + delta * 7);
-  render();
-}
-
-function goToday() {
-  currentMonday = getMonday(new Date());
-  render();
-}
-
-function formatDate(date) {
-  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-}
+function formatDate(date) { return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
 
 function formatDateOrdinal(date) {
   const d = date.getDate();
-  const suffix = d === 1 || d === 21 || d === 31 ? 'st' : d === 2 || d === 22 ? 'nd' : d === 3 || d === 23 ? 'rd' : 'th';
+  const suffix = (d % 10 === 1 && d !== 11) ? 'st'
+               : (d % 10 === 2 && d !== 12) ? 'nd'
+               : (d % 10 === 3 && d !== 13) ? 'rd' : 'th';
   return `${d}${suffix}`;
 }
 
-function getWeekDates() {
-  const dates = [];
-  for (let i = 0; i < 5; i++) {
-    const d = new Date(currentMonday);
-    d.setDate(d.getDate() + i);
-    dates.push(d);
-  }
-  return dates;
+function formatDateNatural(d) {
+  return `${d.toLocaleDateString('en-GB', { weekday: 'long' })} ${formatDateOrdinal(d)} ${d.toLocaleDateString('en-GB', { month: 'long' })}`;
 }
 
-// ── COPY PREVIOUS WEEK ──
-function copyPreviousWeek() {
-  const prevMonday = new Date(currentMonday);
-  prevMonday.setDate(prevMonday.getDate() - 7);
-  const prevKey = weekKey(prevMonday);
-  const curKey = weekKey(currentMonday);
+function formatDateShortNatural(d) {
+  return `${formatDateOrdinal(d)} ${d.toLocaleDateString('en-GB', { month: 'long' })}`;
+}
 
-  if (!rotaData[prevKey]) {
-    showToast('No data found for the previous week');
-    return;
+function formatDayCount(n) {
+  if (n <= 0) return 'no days';
+  if (n === 0.5) return 'half a day';
+  const whole = Math.floor(n);
+  const half = (n - whole) >= 0.5;
+  return `${whole}${half ? '½' : ''} ${n === 1 ? 'day' : 'days'}`;
+}
+
+function joinNatural(list) {
+  if (list.length === 0) return '';
+  if (list.length === 1) return list[0];
+  return list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
+}
+
+function initials(name) {
+  const parts = String(name).trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+/* Firebase paths reject these characters, so names containing them can never
+   be saved. Validate up front rather than failing silently on write. */
+const BAD_KEY_CHARS = /[.#$/[\]]/;
+
+const AVATAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+
+/* ══════════════════════════════════════════════════════════════
+   3. HOLIDAYS & CLOSURES
+   ══════════════════════════════════════════════════════════════ */
+
+const _holidayCache = new Map();
+
+function ukPublicHolidays(year) {
+  if (!_holidayCache.has(year)) _holidayCache.set(year, computeUKPublicHolidays(year));
+  return _holidayCache.get(year);
+}
+
+function computeUKPublicHolidays(year) {
+  const holidays = {};
+
+  let nyd = new Date(year, 0, 1);
+  if (nyd.getDay() === 0) nyd = new Date(year, 0, 2);
+  else if (nyd.getDay() === 6) nyd = new Date(year, 0, 3);
+  holidays[dateKey(nyd)] = 'PH';
+
+  // Anonymous Gregorian (Meeus/Jones/Butcher) Easter algorithm
+  const a = year % 19, b = Math.floor(year / 100), c = year % 100;
+  const d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const easter = new Date(year, Math.floor((h + l - 7 * m + 114) / 31) - 1, ((h + l - 7 * m + 114) % 31) + 1);
+
+  holidays[dateKey(addDays(easter, -2))] = 'PH'; // Good Friday
+  holidays[dateKey(addDays(easter, 1))] = 'PH';  // Easter Monday
+
+  for (let day = 1; day <= 7; day++) {            // Early May
+    const dt = new Date(year, 4, day);
+    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
+  }
+  for (let day = 31; day >= 25; day--) {          // Spring
+    const dt = new Date(year, 4, day);
+    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
+  }
+  for (let day = 31; day >= 25; day--) {          // Summer
+    const dt = new Date(year, 7, day);
+    if (dt.getDay() === 1) { holidays[dateKey(dt)] = 'PH'; break; }
   }
 
-  const curWeek = getWeekData();
-  const hasData = TEAM.some(p => curWeek[p] && curWeek[p].some(s => s));
-  if (hasData && !confirm('This week already has data. Overwrite with previous week\'s rota?')) {
-    return;
+  let xmas = new Date(year, 11, 25);
+  if (xmas.getDay() === 0 || xmas.getDay() === 6) xmas = new Date(year, 11, 27);
+  holidays[dateKey(xmas)] = 'PH';
+
+  let boxing = new Date(year, 11, 26);
+  if (boxing.getDay() === 0) boxing = new Date(year, 11, 28);
+  else if (boxing.getDay() === 6) boxing = new Date(year, 11, 28);
+  if (dateKey(boxing) === dateKey(xmas)) boxing = addDays(boxing, 1);
+  holidays[dateKey(boxing)] = 'PH';
+
+  return holidays;
+}
+
+/* Returns a closure code, or null for a normal working day.
+   Weekends return null — the old build returned 'PH' for them, which was
+   only harmless because every caller filtered weekends out first. */
+function getBlockedStatus(date) {
+  const key = dateKey(date);
+  if (Object.prototype.hasOwnProperty.call(closureOverrides, key)) {
+    const v = closureOverrides[key];
+    return v === CLEARED ? null : v;
   }
+  if (NOC_CLOSURES[key]) return NOC_CLOSURES[key];
+  if (isWeekend(date)) return null;
+  return ukPublicHolidays(date.getFullYear())[key] || null;
+}
 
-  const dates = getWeekDates();
-  const prevWeek = rotaData[prevKey];
+function closureInfo(code) {
+  return CLOSURE_CODES[code] || { short: code, label: code, bg: '#4a5568', fg: '#fff' };
+}
 
-  TEAM.forEach(person => {
-    const prevDays = prevWeek[person] || ['', '', '', '', ''];
-    const newDays = ['', '', '', '', ''];
-    for (let d = 0; d < 5; d++) {
-      const blocked = getBlockedStatus(dates[d]);
-      if (blocked) {
-        newDays[d] = '';
-      } else {
-        const prevStatus = prevDays[d];
-        if (BLOCKED_STATUSES[prevStatus]) {
-          newDays[d] = '';
-        } else {
-          newDays[d] = prevStatus;
-        }
-      }
-    }
-    curWeek[person] = newDays;
-  });
+/* ══════════════════════════════════════════════════════════════
+   4. STATE
+   ══════════════════════════════════════════════════════════════ */
 
-  db.ref(`teamRota/rotaData/${curKey}`).set(curWeek);
-  saveLastUpdated();
+let TEAM = DEFAULT_TEAM.slice();
+let rotaData = {};
+let customStatuses = {};
+let closureOverrides = {};
+let summaryNotes = {};
+let settings = { minOnsite: DEFAULT_MIN_ONSITE };
+let currentMonday = getMonday(new Date());
+let lastUpdatedTime = null;
+let dataLoaded = false;
+const undoStack = [];
+
+function getStatusStyle(status) {
+  if (STATUSES[status]) return STATUSES[status];
+  if (CLOSURE_CODES[status]) {
+    const c = CLOSURE_CODES[status];
+    return { bg: c.bg, fg: c.fg, icon: '📅', long: c.label };
+  }
+  if (customStatuses[status]) {
+    const c = customStatuses[status];
+    return { bg: c.bg || CUSTOM_STYLE.bg, fg: c.fg || c.text || CUSTOM_STYLE.fg, icon: c.icon || CUSTOM_STYLE.icon, long: status };
+  }
+  return { bg: CUSTOM_STYLE.bg, fg: CUSTOM_STYLE.fg, icon: CUSTOM_STYLE.icon, long: status };
+}
+
+function isCustomStatus(status) {
+  return !!status && !STATUSES[status] && !CLOSURE_CODES[status];
+}
+
+/* ══════════════════════════════════════════════════════════════
+   5. FIREBASE
+   ══════════════════════════════════════════════════════════════ */
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
+const SERVER_TIME = (firebase.database.ServerValue && firebase.database.ServerValue.TIMESTAMP) || Date.now();
+
+function dbUpdate(updates, okMessage) {
+  return db.ref().update(updates)
+    .then(() => { if (okMessage) showToast(okMessage); })
+    .catch(err => showToast('Save failed: ' + err.message, true));
+}
+
+function touchUpdates(updates) {
+  updates['teamRota/lastUpdated'] = SERVER_TIME;
+  return updates;
+}
+
+$('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = $('loginBtn');
+  const err = $('loginError');
+  err.textContent = '';
+  btn.disabled = true;
+  auth.signInWithEmailAndPassword($('emailInput').value.trim(), $('passwordInput').value)
+    .catch(error => { err.textContent = error.message.replace(/^Firebase:\s*/, ''); })
+    .finally(() => { btn.disabled = false; });
+});
+
+$('signOutBtn').addEventListener('click', () => {
+  if (!confirm('Sign out of the rota?')) return;
+  auth.signOut();
+});
+
+let rotaRef = null;
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    $('loginOverlay').hidden = true;
+    $('passwordInput').value = '';
+    $('signedInAs').textContent = `Signed in as ${user.email}`;
+    if (rotaRef) rotaRef.off();
+    rotaRef = db.ref('teamRota');
+    rotaRef.on('value', snapshot => { applySnapshot(snapshot.val()); }, err => {
+      showToast('Could not load rota: ' + err.message, true);
+    });
+  } else {
+    if (rotaRef) { rotaRef.off(); rotaRef = null; }
+    dataLoaded = false;
+    rotaData = {}; customStatuses = {}; closureOverrides = {}; summaryNotes = {};
+    TEAM = DEFAULT_TEAM.slice();
+    $('signedInAs').textContent = 'Team working pattern planner';
+    $('loginOverlay').hidden = false;
+    $('emailInput').focus();
+    render();
+  }
+});
+
+function applySnapshot(data) {
+  data = data || {};
+  rotaData = data.rotaData || {};
+  customStatuses = data.customStatuses || {};
+  closureOverrides = data.closures || {};
+  summaryNotes = data.summaryNotes || {};
+  settings = Object.assign({ minOnsite: DEFAULT_MIN_ONSITE }, data.settings || {});
+  TEAM = Array.isArray(data.team) && data.team.length
+    ? data.team.filter(n => typeof n === 'string' && n.trim()).map(n => n.trim())
+    : DEFAULT_TEAM.slice();
+  lastUpdatedTime = data.lastUpdated ? new Date(data.lastUpdated) : null;
+  dataLoaded = true;
+  updateMetaDisplay();
   render();
-  showToast('Previous week\'s rota copied!');
 }
 
-// ── RENDER ──
-function render() {
-  renderWeekLabel();
-  renderTable();
-  generateSummaries();
+db.ref('.info/connected').on('value', snap => {
+  const dot = $('connDot');
+  const online = snap.val() === true;
+  dot.classList.toggle('online', online);
+  dot.classList.toggle('offline', !online);
+  dot.title = online ? 'Connected — changes sync live' : 'Offline — changes will sync when you reconnect';
+});
+
+/* ══════════════════════════════════════════════════════════════
+   6. DATA ACCESS
+   ══════════════════════════════════════════════════════════════ */
+
+/* Reads a week, transparently falling back to the pre-fix (UTC-shifted) key so
+   nothing written by the old build is lost. Writes always use the correct key
+   and delete the legacy one, so data migrates a week at a time as it is edited. */
+function rawWeek(monday) {
+  const k = weekKey(monday);
+  if (rotaData[k]) return rotaData[k];
+  const legacy = legacyWeekKey(monday);
+  if (legacy !== k && rotaData[legacy]) return rotaData[legacy];
+  return null;
 }
 
-function renderWeekLabel() {
-  const dates = getWeekDates();
-  document.getElementById('weekLabel').textContent =
-    `${formatDate(dates[0])} – ${formatDate(dates[4])}, ${dates[0].getFullYear()}`;
+function coerceDays(value) {
+  const out = ['', '', '', '', ''];
+  if (!value) return out;
+  for (let i = 0; i < 5; i++) {
+    const v = Array.isArray(value) ? value[i] : value[i] != null ? value[i] : value[String(i)];
+    out[i] = typeof v === 'string' ? v : '';
+  }
+  return out;
 }
 
-const AVATAR_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+/* Always returns a fresh normalised copy — never a live reference into
+   rotaData. The old getWeekData() mutated global state as a side effect of
+   *reading*, which made merely visiting a week look like it had data. */
+function weekDataFor(monday) {
+  const raw = rawWeek(monday);
+  const out = {};
+  if (raw) Object.keys(raw).forEach(person => { out[person] = coerceDays(raw[person]); });
+  TEAM.forEach(person => { if (!out[person]) out[person] = ['', '', '', '', '']; });
+  return out;
+}
 
-function renderTable() {
-  const dates = getWeekDates();
+function getWeekData() { return weekDataFor(currentMonday); }
+
+function weekHasContent(monday) {
+  const raw = rawWeek(monday);
+  if (!raw) return false;
+  return Object.keys(raw).some(person => coerceDays(raw[person]).some(Boolean));
+}
+
+function getWeekDates(monday) {
+  const base = monday || currentMonday;
+  return [0, 1, 2, 3, 4].map(i => addDays(base, i));
+}
+
+function statusFor(person, date) {
+  const monday = getMonday(date);
+  const raw = rawWeek(monday);
+  if (!raw || !raw[person]) return undefined;      // no data recorded
+  const idx = daysBetween(monday, date);
+  if (idx < 0 || idx > 4) return undefined;
+  return coerceDays(raw[person])[idx];
+}
+
+/* ══════════════════════════════════════════════════════════════
+   7. MUTATIONS
+   ══════════════════════════════════════════════════════════════ */
+
+function pushUndo(label, monday) {
+  const m = monday || currentMonday;
+  undoStack.push({ label, key: weekKey(m), monday: new Date(m), data: weekDataFor(m) });
+  if (undoStack.length > 25) undoStack.shift();
+  refreshUndoButton();
+}
+
+function refreshUndoButton() {
+  const btn = $('undoBtn');
+  const last = undoStack[undoStack.length - 1];
+  btn.disabled = undoStack.length === 0;
+  btn.title = last ? `Undo: ${last.label} (Ctrl+Z)` : 'Nothing to undo';
+}
+
+function undo() {
+  const entry = undoStack.pop();
+  refreshUndoButton();
+  if (!entry) return;
+  currentMonday = new Date(entry.monday);
+  writeWeek(entry.data, entry.monday);
+  render();
+  showToast(`Undone: ${entry.label}`);
+}
+
+function writeWeek(week, monday) {
+  const m = monday || currentMonday;
+  const key = weekKey(m);
+  const legacy = legacyWeekKey(m);
+  const updates = {};
+  updates[`teamRota/rotaData/${key}`] = week;
+  if (legacy !== key && rotaData[legacy]) updates[`teamRota/rotaData/${legacy}`] = null;
+  return dbUpdate(touchUpdates(updates));
+}
+
+function applyStatus(person, dayIndex, status, wholeWeek) {
   const week = getWeekData();
+  const dates = getWeekDates();
+  if (!week[person]) week[person] = ['', '', '', '', ''];
 
-  let headHTML = '<tr><th>Team</th>';
-  dates.forEach((d, i) => {
-    const blocked = getBlockedStatus(d);
-    const blockedLabel = blocked ? `<span class="day-blocked">${BLOCKED_STATUSES[blocked]?.label || blocked}</span>` : '';
-    headHTML += `<th>
-      <span class="day-name">${DAY_SHORT[i]}</span>
-      <span class="day-date">${formatDateOrdinal(d)}</span>
-      ${blockedLabel}
-    </th>`;
-  });
-  headHTML += '</tr>';
-  document.getElementById('rotaHead').innerHTML = headHTML;
-
-  let bodyHTML = '';
-  TEAM.forEach(person => {
-    bodyHTML += `<tr><td class="name-cell"><div class="name-inner"><div class="avatar">${AVATAR_SVG}</div>${person}</div></td>`;
-    for (let d = 0; d < 5; d++) {
-      const blocked = getBlockedStatus(dates[d]);
-      if (blocked) {
-        const bStyle = BLOCKED_STATUSES[blocked] || { bg: '#4a5568', text: '#fff', label: blocked };
-        bodyHTML += `<td class="status-cell">
-          <div class="status-btn blocked" style="background-color:${bStyle.bg};color:${bStyle.text};" title="${bStyle.label || blocked} - not editable">
-            ${bStyle.label || blocked}
-          </div>
-        </td>`;
-      } else {
-        const status = week[person]?.[d] || '';
-        const style = status ? getStatusStyle(status) : null;
-        const cls = status ? '' : 'empty';
-        const bgStyle = style ? `background:${style.bg};color:${style.text};` : '';
-        const iconHTML = style && style.icon ? `<span class="chip-icon">${style.icon}</span>` : '';
-        const label = status || '+';
-        bodyHTML += `<td class="status-cell">
-          <button class="status-btn ${cls}" style="${bgStyle}"
-            onclick="openDropdown(this, '${person}', ${d})">${iconHTML}${label}</button>
-        </td>`;
-      }
-    }
-    bodyHTML += '</tr>';
-  });
-  document.getElementById('rotaBody').innerHTML = bodyHTML;
+  if (wholeWeek) {
+    pushUndo(`set ${person}'s week`, currentMonday);
+    for (let d = 0; d < 5; d++) if (!getBlockedStatus(dates[d])) week[person][d] = status;
+  } else {
+    pushUndo(`${person} · ${DAY_SHORT[dayIndex]}`, currentMonday);
+    week[person][dayIndex] = status;
+  }
+  writeWeek(week);
+  if (wholeWeek) showToast(`${person}'s whole week set${status ? ` to ${status}` : ' to empty'}`);
 }
 
-// ── DROPDOWN ──
-function openDropdown(btn, person, dayIndex) {
-  closeDropdown();
-  const dropdown = document.getElementById('dropdown');
-  const overlay = document.getElementById('dropdownOverlay');
+function clearPersonWeek(person) {
+  if (!confirm(`Clear ${person}'s statuses for this week?`)) return;
+  const week = getWeekData();
+  pushUndo(`clear ${person}'s week`, currentMonday);
+  week[person] = ['', '', '', '', ''];
+  writeWeek(week);
+  showToast(`${person}'s week cleared`);
+}
 
-  const groups = {
-    'Location': ['On-site (Full)', 'On-site (AM)', 'On-site (PM)', 'WFH'],
-    'Leave': ['AL', 'AL (AM)', 'AL (PM)'],
-    'Assignment': ['SD', 'SITD'],
-    'Other': ['Non-Working Day'],
-  };
+function clearDayForEveryone(dayIndex) {
+  if (!confirm(`Clear ${DAYS[dayIndex]} for the whole team?`)) return;
+  const week = getWeekData();
+  pushUndo(`clear ${DAYS[dayIndex]}`, currentMonday);
+  TEAM.forEach(p => { if (week[p]) week[p][dayIndex] = ''; });
+  writeWeek(week);
+  showToast(`${DAYS[dayIndex]} cleared`);
+}
 
-  let html = '';
-  html += `<div class="dropdown-item clear-item" onclick="selectStatus('${person}', ${dayIndex}, '')">✕ Clear</div>`;
-  html += '<div class="dropdown-divider"></div>';
+function clearWeek() {
+  if (!weekHasContent(currentMonday)) { showToast('This week is already empty'); return; }
+  if (!confirm('Clear all statuses for this week?')) return;
+  pushUndo('clear week', currentMonday);
+  const key = weekKey(currentMonday);
+  const legacy = legacyWeekKey(currentMonday);
+  const updates = {};
+  updates[`teamRota/rotaData/${key}`] = null;
+  if (legacy !== key) updates[`teamRota/rotaData/${legacy}`] = null;
+  dbUpdate(touchUpdates(updates), 'Week cleared');
+}
 
-  Object.entries(groups).forEach(([label, statuses]) => {
-    html += `<div class="dropdown-section">${label}</div>`;
-    statuses.forEach(s => {
-      const st = getStatusStyle(s);
-      const icon = st.icon || '';
-      html += `<div class="dropdown-item" onclick="selectStatus('${person}', ${dayIndex}, '${s}')">
-        <span class="swatch" style="background:${st.bg}"></span>
-        ${icon ? icon + ' ' : ''}${s}
-      </div>`;
+function copyPreviousWeek() {
+  const prevMonday = addDays(currentMonday, -7);
+  if (!weekHasContent(prevMonday)) { showToast('The previous week has no data to copy'); return; }
+  if (weekHasContent(currentMonday) && !confirm('This week already has data. Overwrite it with last week\'s rota?')) return;
+
+  const prev = weekDataFor(prevMonday);
+  const week = getWeekData();
+  const dates = getWeekDates();
+
+  pushUndo('copy previous week', currentMonday);
+  TEAM.forEach(person => {
+    const source = prev[person] || ['', '', '', '', ''];
+    week[person] = dates.map((date, d) => {
+      if (getBlockedStatus(date)) return '';
+      const s = source[d];
+      return CLOSURE_CODES[s] ? '' : s;       // never carry a closure code across
+    });
+  });
+  writeWeek(week);
+  showToast('Previous week copied');
+}
+
+/* ── custom statuses ── */
+
+function addCustomStatus(name, person, dayIndex) {
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  if (BAD_KEY_CHARS.test(trimmed)) { showToast('Names cannot contain . # $ / [ ]', true); return; }
+  if (STATUSES[trimmed] || CLOSURE_CODES[trimmed]) { showToast('That is already a built-in status', true); return; }
+
+  if (!customStatuses[trimmed]) {
+    const palette = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#6366f1', '#14b8a6', '#f43f5e'];
+    customStatuses[trimmed] = {
+      bg: palette[Object.keys(customStatuses).length % palette.length],
+      fg: '#fff', group: 'custom', icon: '📌'
+    };
+    dbUpdate(touchUpdates({ 'teamRota/customStatuses': customStatuses }));
+  }
+  applyStatus(person, dayIndex, trimmed, false);
+}
+
+function renameCustomStatus(oldName) {
+  const input = prompt(`Rename "${oldName}" to:`, oldName);
+  if (input === null) return;
+  const newName = input.trim();
+  if (!newName || newName === oldName) return;
+  if (BAD_KEY_CHARS.test(newName)) { showToast('Names cannot contain . # $ / [ ]', true); return; }
+  if (STATUSES[newName] || CLOSURE_CODES[newName] || customStatuses[newName]) {
+    showToast('That name is already in use', true); return;
+  }
+
+  const updates = {};
+  const next = {};
+  Object.keys(customStatuses).forEach(k => { next[k === oldName ? newName : k] = customStatuses[k]; });
+  updates['teamRota/customStatuses'] = next;
+
+  Object.keys(rotaData).forEach(wk => {
+    const raw = rotaData[wk];
+    if (!raw) return;
+    let changed = false;
+    const week = {};
+    Object.keys(raw).forEach(person => {
+      const days = coerceDays(raw[person]);
+      days.forEach((s, i) => { if (s === oldName) { days[i] = newName; changed = true; } });
+      week[person] = days;
+    });
+    if (changed) updates[`teamRota/rotaData/${wk}`] = week;
+  });
+
+  dbUpdate(touchUpdates(updates), `Renamed to "${newName}" everywhere`);
+}
+
+function deleteCustomStatus(name) {
+  if (!confirm(`Remove "${name}" from the status list?\n\nDays already set to it keep the label but revert to the default colour.`)) return;
+  const next = Object.assign({}, customStatuses);
+  delete next[name];
+  dbUpdate(touchUpdates({ 'teamRota/customStatuses': next }), 'Custom status removed');
+}
+
+/* ── team ── */
+
+function saveTeam(team, message) {
+  return dbUpdate(touchUpdates({ 'teamRota/team': team }), message);
+}
+
+function addTeamMember() {
+  const input = prompt('Name of the new team member:');
+  if (input === null) return;
+  const name = input.trim();
+  if (!name) return;
+  if (BAD_KEY_CHARS.test(name)) { showToast('Names cannot contain . # $ / [ ]', true); return; }
+  if (TEAM.includes(name)) { showToast(`${name} is already on the team`, true); return; }
+  saveTeam(TEAM.concat([name]), `${name} added`);
+}
+
+function removeTeamMember(person) {
+  if (TEAM.length <= 1) { showToast('You need at least one team member', true); return; }
+  if (!confirm(`Remove ${person} from the rota?\n\nTheir past weeks stay in the data and will reappear if you add them back.`)) return;
+  saveTeam(TEAM.filter(p => p !== person), `${person} removed`);
+}
+
+function renameTeamMember(person) {
+  const input = prompt(`Rename "${person}" to:`, person);
+  if (input === null) return;
+  const name = input.trim();
+  if (!name || name === person) return;
+  if (BAD_KEY_CHARS.test(name)) { showToast('Names cannot contain . # $ / [ ]', true); return; }
+  if (TEAM.includes(name)) { showToast('That name is already on the team', true); return; }
+
+  const updates = {};
+  updates['teamRota/team'] = TEAM.map(p => (p === person ? name : p));
+
+  Object.keys(rotaData).forEach(wk => {
+    const raw = rotaData[wk];
+    if (!raw || !raw[person]) return;
+    const week = {};
+    Object.keys(raw).forEach(p => { week[p === person ? name : p] = coerceDays(raw[p]); });
+    updates[`teamRota/rotaData/${wk}`] = week;
+  });
+
+  Object.keys(summaryNotes).forEach(wk => {
+    const notes = summaryNotes[wk];
+    if (!notes || notes[person] === undefined) return;
+    const next = Object.assign({}, notes);
+    next[name] = next[person];
+    delete next[person];
+    updates[`teamRota/summaryNotes/${wk}`] = next;
+  });
+
+  dbUpdate(touchUpdates(updates), `Renamed to ${name}`);
+}
+
+function moveTeamMember(person, delta) {
+  const idx = TEAM.indexOf(person);
+  const target = idx + delta;
+  if (idx < 0 || target < 0 || target >= TEAM.length) return;
+  const team = TEAM.slice();
+  team.splice(target, 0, team.splice(idx, 1)[0]);
+  saveTeam(team);
+}
+
+/* ── closures ── */
+
+function setClosure(date, code) {
+  const key = dateKey(date);
+  const builtIn = NOC_CLOSURES[key] || ukPublicHolidays(date.getFullYear())[key] || null;
+  const updates = {};
+  if (code === null) {
+    // "Clear" means: suppress a built-in closure, or drop a manual one.
+    updates[`teamRota/closures/${key}`] = builtIn ? CLEARED : null;
+  } else {
+    updates[`teamRota/closures/${key}`] = builtIn === code ? null : code;
+  }
+  dbUpdate(touchUpdates(updates), code === null ? 'Day marking cleared' : `Marked as ${closureInfo(code).label}`);
+}
+
+/* ── settings ── */
+
+function setMinOnsite(value) {
+  const n = Math.max(0, Math.min(TEAM.length, parseInt(value, 10) || 0));
+  settings.minOnsite = n;
+  dbUpdate(touchUpdates({ 'teamRota/settings/minOnsite': n }));
+  renderInsights();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   8. MENU COMPONENT
+   ══════════════════════════════════════════════════════════════ */
+
+let menuHandlers = [];
+let menuAnchor = null;
+
+function closeMenu(restoreFocus) {
+  const menu = $('menu');
+  if (!menu.classList.contains('open')) return;
+  menu.classList.remove('open');
+  $('menuOverlay').classList.remove('open');
+  if (menuAnchor) {
+    menuAnchor.setAttribute('aria-expanded', 'false');
+    if (restoreFocus && document.body.contains(menuAnchor)) menuAnchor.focus();
+  }
+  menuAnchor = null;
+  menuHandlers = [];
+}
+
+/* sections: [{ header, items: [{ text, icon, swatch, muted, danger, checked, onSelect,
+                                 actions: [{ icon, title, onSelect }] }],
+               note, input: { placeholder, buttonText, onSubmit } }] */
+function openMenu(anchor, sections) {
+  closeMenu(false);
+  const menu = $('menu');
+  menu.innerHTML = '';
+  menuHandlers = [];
+  menuAnchor = anchor;
+
+  const register = fn => { menuHandlers.push(fn); return menuHandlers.length - 1; };
+
+  sections.forEach((section, si) => {
+    if (si > 0 && section.divider !== false) {
+      const div = document.createElement('div');
+      div.className = 'menu-divider';
+      menu.appendChild(div);
+    }
+    if (section.header) {
+      const h = document.createElement('div');
+      h.className = 'menu-header';
+      h.textContent = section.header;
+      menu.appendChild(h);
+    }
+    (section.items || []).forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'menu-row';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'menu-item' + (item.muted ? ' muted' : '') + (item.danger ? ' danger' : '') + (item.checked ? ' checked' : '');
+      btn.setAttribute('role', 'menuitem');
+      if (item.disabled) btn.setAttribute('aria-disabled', 'true');
+      if (item.title) btn.title = item.title;
+
+      if (item.swatch) {
+        const sw = document.createElement('span');
+        sw.className = 'swatch';
+        sw.style.background = item.swatch;
+        btn.appendChild(sw);
+      }
+      if (item.icon) {
+        const ic = document.createElement('span');
+        ic.className = 'mi-icon';
+        ic.textContent = item.icon;
+        btn.appendChild(ic);
+      }
+      const tx = document.createElement('span');
+      tx.className = 'mi-text';
+      tx.textContent = item.text;
+      btn.appendChild(tx);
+
+      if (!item.disabled && item.onSelect) btn.dataset.mi = register(item.onSelect);
+      row.appendChild(btn);
+
+      if (item.actions && item.actions.length) {
+        const wrap = document.createElement('span');
+        wrap.className = 'mi-actions';
+        item.actions.forEach(action => {
+          const ab = document.createElement('button');
+          ab.type = 'button';
+          ab.className = 'mi-action';
+          ab.textContent = action.icon;
+          ab.title = action.title || '';
+          ab.setAttribute('aria-label', action.title || action.icon);
+          ab.dataset.mi = register(action.onSelect);
+          wrap.appendChild(ab);
+        });
+        row.appendChild(wrap);
+      }
+      menu.appendChild(row);
+    });
+
+    if (section.input) {
+      const row = document.createElement('div');
+      row.className = 'menu-input-row';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = section.input.placeholder || '';
+      input.setAttribute('aria-label', section.input.placeholder || 'Value');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = section.input.buttonText || 'Add';
+      const submit = () => section.input.onSubmit(input.value);
+      btn.dataset.mi = register(submit);
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); submit(); }
+        e.stopPropagation();
+      });
+      row.appendChild(input);
+      row.appendChild(btn);
+      menu.appendChild(row);
+    }
+
+    if (section.note) {
+      const n = document.createElement('div');
+      n.className = 'menu-note';
+      n.textContent = section.note;
+      menu.appendChild(n);
+    }
+  });
+
+  menu.classList.add('open');
+  $('menuOverlay').classList.add('open');
+  anchor.setAttribute('aria-expanded', 'true');
+  positionMenu(anchor);
+
+  const first = menu.querySelector('.menu-item[data-mi]');
+  if (first) first.focus();
+}
+
+function positionMenu(anchor) {
+  const menu = $('menu');
+  const a = anchor.getBoundingClientRect();
+  const m = menu.getBoundingClientRect();
+  const pad = 10;
+  let top = a.bottom + 6;
+  if (top + m.height > window.innerHeight - pad) {
+    const above = a.top - m.height - 6;
+    top = above >= pad ? above : Math.max(pad, window.innerHeight - m.height - pad);
+  }
+  let left = a.left;
+  if (left + m.width > window.innerWidth - pad) left = window.innerWidth - m.width - pad;
+  menu.style.top = Math.max(pad, top) + 'px';
+  menu.style.left = Math.max(pad, left) + 'px';
+}
+
+$('menuOverlay').addEventListener('click', () => closeMenu(true));
+
+$('menu').addEventListener('click', e => {
+  const btn = e.target.closest('[data-mi]');
+  if (!btn) return;
+  const fn = menuHandlers[Number(btn.dataset.mi)];
+  if (fn) fn(e);
+});
+
+$('menu').addEventListener('keydown', e => {
+  if (e.key === 'Escape') { e.preventDefault(); closeMenu(true); return; }
+  if (e.key === 'Tab') { closeMenu(true); return; }
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Home' && e.key !== 'End') return;
+  e.preventDefault();
+  const items = Array.from($('menu').querySelectorAll('.menu-item[data-mi]'));
+  if (!items.length) return;
+  const idx = items.indexOf(document.activeElement);
+  let next;
+  if (e.key === 'Home') next = 0;
+  else if (e.key === 'End') next = items.length - 1;
+  else if (e.key === 'ArrowDown') next = idx < 0 ? 0 : (idx + 1) % items.length;
+  else next = idx < 0 ? items.length - 1 : (idx - 1 + items.length) % items.length;
+  items[next].focus();
+});
+
+window.addEventListener('resize', () => closeMenu(false));
+window.addEventListener('scroll', () => closeMenu(false), true);
+
+/* ── menu builders ── */
+
+function openStatusMenu(anchor, person, dayIndex) {
+  const dates = getWeekDates();
+  const current = getWeekData()[person][dayIndex];
+  const sections = [];
+
+  sections.push({
+    header: `${person} · ${DAY_SHORT[dayIndex]} ${formatDateOrdinal(dates[dayIndex])}`,
+    items: [{
+      text: 'Clear', icon: '✕', muted: true,
+      onSelect: e => { applyStatus(person, dayIndex, '', e.shiftKey); closeMenu(false); }
+    }]
+  });
+
+  STATUS_GROUPS.forEach(group => {
+    const list = Object.keys(STATUSES).filter(s => STATUSES[s].group === group);
+    if (!list.length) return;
+    sections.push({
+      header: group,
+      items: list.map(s => ({
+        text: s, icon: STATUSES[s].icon, swatch: STATUSES[s].bg, checked: current === s,
+        onSelect: e => { applyStatus(person, dayIndex, s, e.shiftKey); closeMenu(false); }
+      }))
     });
   });
 
   const customKeys = Object.keys(customStatuses);
-  if (customKeys.length > 0) {
-    html += '<div class="dropdown-divider"></div>';
-    html += '<div class="dropdown-section">Custom</div>';
-    customKeys.forEach(s => {
-      const st = customStatuses[s];
-      const safeName = escapeHtml(s).replace(/'/g, "\\'");
-
-      html += `<div class="dropdown-item" style="padding-right: 4px;">
-        <div style="display:flex;align-items:center;gap:8px;flex:1" onclick="selectStatus('${person}', ${dayIndex}, '${safeName}')">
-          <span class="swatch" style="background:${st.bg}"></span>
-          ${escapeHtml(s)}
-        </div>
-        <button onclick="renameCustomStatus('${safeName}')" style="background:none;border:none;cursor:pointer;opacity:0.6;font-size:12px;padding:2px;" title="Rename">✏️</button>
-        <button onclick="deleteCustomStatus('${safeName}')" style="background:none;border:none;cursor:pointer;opacity:0.6;color:red;font-size:12px;padding:2px;" title="Delete">✕</button>
-      </div>`;
+  if (customKeys.length) {
+    sections.push({
+      header: 'Custom',
+      items: customKeys.map(s => ({
+        text: s, swatch: getStatusStyle(s).bg, checked: current === s,
+        onSelect: e => { applyStatus(person, dayIndex, s, e.shiftKey); closeMenu(false); },
+        actions: [
+          { icon: '✏️', title: `Rename ${s}`, onSelect: () => { closeMenu(false); renameCustomStatus(s); } },
+          { icon: '✕', title: `Delete ${s}`, onSelect: () => { closeMenu(false); deleteCustomStatus(s); } }
+        ]
+      }))
     });
   }
 
-  html += '<div class="dropdown-divider"></div>';
-  html += '<div class="dropdown-section">Add Custom Status</div>';
-  html += `<div class="custom-input-row">
-    <input type="text" id="customStatusInput" placeholder="e.g. MS SQL Course" onkeydown="if(event.key==='Enter')addCustomStatus('${person}', ${dayIndex})">
-    <button onclick="addCustomStatus('${person}', ${dayIndex})">Add</button>
-  </div>`;
-
-  dropdown.innerHTML = html;
-
-  const rect = btn.getBoundingClientRect();
-  let top = rect.bottom + 4;
-  let left = rect.left;
-
-  dropdown.classList.add('open');
-  const dRect = dropdown.getBoundingClientRect();
-  if (top + dRect.height > window.innerHeight - 20) top = rect.top - dRect.height - 4;
-  if (left + dRect.width > window.innerWidth - 20) left = window.innerWidth - dRect.width - 20;
-
-  dropdown.style.top = top + 'px';
-  dropdown.style.left = left + 'px';
-  overlay.classList.add('open');
-}
-
-function closeDropdown() {
-  document.getElementById('dropdown').classList.remove('open');
-  document.getElementById('dropdownOverlay').classList.remove('open');
-}
-
-function selectStatus(person, dayIndex, status) {
-  setStatus(person, dayIndex, status);
-  closeDropdown();
-}
-
-function addCustomStatus(person, dayIndex) {
-  const input = document.getElementById('customStatusInput');
-  const name = input.value.trim();
-  if (!name) return;
-  if (!customStatuses[name]) {
-    const colours = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#6366f1', '#14b8a6', '#f43f5e'];
-    const idx = Object.keys(customStatuses).length % colours.length;
-    customStatuses[name] = { bg: colours[idx], text: '#fff', group: 'custom', icon: '📌' };
-    db.ref('teamRota/customStatuses').set(customStatuses);
-  }
-  setStatus(person, dayIndex, name);
-  closeDropdown();
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function renameCustomStatus(oldName) {
-  const newName = prompt(`Rename '${oldName}' to:`, oldName);
-  if (!newName || newName.trim() === "" || newName === oldName) return;
-  const finalName = newName.trim();
-
-  customStatuses[finalName] = customStatuses[oldName];
-  delete customStatuses[oldName];
-  db.ref('teamRota/customStatuses').set(customStatuses);
-
-  Object.keys(rotaData).forEach(weekKey => {
-    let weekChanged = false;
-    Object.keys(rotaData[weekKey]).forEach(teamMember => {
-      rotaData[weekKey][teamMember].forEach((status, i) => {
-        if (status === oldName) {
-          rotaData[weekKey][teamMember][i] = finalName;
-          weekChanged = true;
-        }
-      });
-    });
-    if (weekChanged) {
-      db.ref(`teamRota/rotaData/${weekKey}`).set(rotaData[weekKey]);
-    }
+  sections.push({
+    header: 'Add custom status',
+    input: {
+      placeholder: 'e.g. MS SQL Course',
+      onSubmit: value => { closeMenu(false); addCustomStatus(value, person, dayIndex); }
+    },
+    note: 'Tip: hold Shift when picking a status to apply it to this person\'s whole week.'
   });
 
-  render();
-  closeDropdown();
-  saveLastUpdated();
-  showToast('Status renamed and updated everywhere!');
+  openMenu(anchor, sections);
 }
 
-function deleteCustomStatus(name) {
-  if (!confirm(`Delete '${name}' from suggestions?\n\nThis won't remove it from days already assigned, but it will revert to a default color.`)) return;
-  delete customStatuses[name];
-  db.ref('teamRota/customStatuses').set(customStatuses);
-  saveLastUpdated();
-  render();
-  closeDropdown();
-  showToast('Custom status deleted.');
+function openPersonMenu(anchor, person) {
+  const idx = TEAM.indexOf(person);
+  openMenu(anchor, [
+    {
+      header: person,
+      items: [
+        { text: 'Clear this week', icon: '✕', onSelect: () => { closeMenu(false); clearPersonWeek(person); } }
+      ]
+    },
+    {
+      header: 'Team',
+      items: [
+        { text: 'Rename…', icon: '✏️', onSelect: () => { closeMenu(false); renameTeamMember(person); } },
+        { text: 'Move up', icon: '↑', disabled: idx <= 0, onSelect: () => { closeMenu(false); moveTeamMember(person, -1); } },
+        { text: 'Move down', icon: '↓', disabled: idx >= TEAM.length - 1, onSelect: () => { closeMenu(false); moveTeamMember(person, 1); } },
+        { text: 'Remove from rota', icon: '🗑', danger: true, onSelect: () => { closeMenu(false); removeTeamMember(person); } },
+        { text: 'Add team member…', icon: '＋', onSelect: () => { closeMenu(false); addTeamMember(); } }
+      ]
+    }
+  ]);
 }
 
-// ── SUMMARIES ──
-function generateTeamWideSummary(dates) {
-  const blockedDays = [];
+function openDayMenu(anchor, dayIndex) {
+  const date = getWeekDates()[dayIndex];
+  const current = getBlockedStatus(date);
+  const items = Object.keys(CLOSURE_CODES).map(code => ({
+    text: CLOSURE_CODES[code].label,
+    swatch: CLOSURE_CODES[code].bg,
+    checked: current === code,
+    onSelect: () => { closeMenu(false); setClosure(date, code); }
+  }));
+  if (current) {
+    items.push({ text: 'Normal working day', icon: '✕', muted: true, onSelect: () => { closeMenu(false); setClosure(date, null); } });
+  }
+  openMenu(anchor, [
+    { header: formatDateNatural(date), items },
+    {
+      header: 'This day',
+      items: [{ text: 'Clear for everyone', icon: '🧹', danger: true, onSelect: () => { closeMenu(false); clearDayForEveryone(dayIndex); } }],
+      note: 'Closure days are shared with the whole team.'
+    }
+  ]);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   9. RENDER
+   ══════════════════════════════════════════════════════════════ */
+
+function render() {
+  renderWeekLabel();
+  renderTable();
+  renderInsights();
+  renderSummaries();
+}
+
+function renderWeekLabel() {
+  const dates = getWeekDates();
+  const thisWeek = weekKey(getMonday(new Date())) === weekKey(currentMonday);
+  const nextWeek = weekKey(addDays(getMonday(new Date()), 7)) === weekKey(currentMonday);
+  const tag = thisWeek ? '<span class="week-tag">This week</span>'
+            : nextWeek ? '<span class="week-tag">Next week</span>' : '';
+  $('weekLabelText').innerHTML =
+    `${escHtml(formatDate(dates[0]))} – ${escHtml(formatDate(dates[4]))}, ${dates[0].getFullYear()} ${tag}`;
+}
+
+function renderTable() {
+  const dates = getWeekDates();
+  const week = getWeekData();
+  const todayKey = dateKey(new Date());
+
+  let head = '<tr><th scope="col">Team</th>';
   dates.forEach((d, i) => {
     const blocked = getBlockedStatus(d);
-    if (blocked) {
-      const bInfo = BLOCKED_STATUSES[blocked];
-      const label = bInfo ? bInfo.label : blocked;
-      blockedDays.push({ date: d, dayName: FULL_DAY_NAMES[i], label });
+    const info = blocked ? closureInfo(blocked) : null;
+    const isToday = dateKey(d) === todayKey;
+    head += `<th scope="col"${isToday ? ' class="is-today"' : ''}>
+      <button type="button" class="day-head" data-day="${i}" aria-haspopup="menu" aria-expanded="false"
+              title="${escHtml(formatDateNatural(d))} — click to mark as a closure day">
+        <span class="day-name">${DAY_SHORT[i]}</span>
+        <span class="day-date">${escHtml(formatDateOrdinal(d))}</span>
+        ${info ? `<span class="day-blocked">${escHtml(info.label)}</span>` : ''}
+      </button>
+    </th>`;
+  });
+  head += '</tr>';
+  $('rotaHead').innerHTML = head;
+
+  let body = '';
+  TEAM.forEach((person, pi) => {
+    body += `<tr><td class="name-cell">
+      <button type="button" class="name-btn" data-person="${pi}" aria-haspopup="menu" aria-expanded="false"
+              title="${escHtml(person)} — click for options">
+        <span class="avatar">${initials(person) ? escHtml(initials(person)) : AVATAR_SVG}</span>
+        <span class="name-text">${escHtml(person)}</span>
+      </button>
+    </td>`;
+    for (let d = 0; d < 5; d++) {
+      const isToday = dateKey(dates[d]) === todayKey;
+      const cls = isToday ? ' class="status-cell is-today"' : ' class="status-cell"';
+      const blocked = getBlockedStatus(dates[d]);
+      if (blocked) {
+        const info = closureInfo(blocked);
+        body += `<td${cls}>
+          <div class="status-btn blocked" style="background-color:${info.bg};color:${info.fg};"
+               title="${escHtml(info.label)} — not editable">${escHtml(info.short)}</div>
+        </td>`;
+      } else {
+        const status = week[person][d];
+        const style = status ? getStatusStyle(status) : null;
+        const label = status || '+';
+        const aria = `${person}, ${DAYS[d]} ${formatDateOrdinal(dates[d])}: ${status || 'not set'}. Change status`;
+        body += `<td${cls}>
+          <button type="button" class="status-btn${status ? '' : ' empty'}"
+            ${style ? `style="background:${style.bg};color:${style.fg};"` : ''}
+            data-person="${pi}" data-day="${d}" aria-haspopup="menu" aria-expanded="false"
+            aria-label="${escHtml(aria)}" title="${escHtml(status || 'Not set')}">
+            ${style && style.icon ? `<span class="chip-icon" aria-hidden="true">${style.icon}</span>` : ''}
+            <span class="chip-label">${escHtml(label)}</span>
+          </button>
+        </td>`;
+      }
     }
+    body += '</tr>';
+  });
+  $('rotaBody').innerHTML = body;
+
+  renderCoverageRow(week, dates);
+}
+
+function computeCoverage(week, dates) {
+  return dates.map((date, d) => {
+    const blocked = getBlockedStatus(date);
+    const counts = { onsite: 0, wfh: 0, leave: 0, sd: 0, sitd: 0, other: 0, unset: 0, blocked: !!blocked };
+    if (blocked) return counts;
+    TEAM.forEach(person => {
+      const s = (week[person] || [])[d];
+      if (!s) { counts.unset++; return; }
+      if (s.startsWith('On-site')) counts.onsite++;
+      else if (s === 'WFH') counts.wfh++;
+      else if (s.startsWith('AL') || s === 'Sick') counts.leave++;
+      else if (s === 'Non-Working Day') counts.leave++;
+      else counts.other++;
+      if (s === 'SD') counts.sd++;
+      if (s === 'SITD') counts.sitd++;
+    });
+    return counts;
+  });
+}
+
+function renderCoverageRow(week, dates) {
+  const cover = computeCoverage(week, dates);
+  const min = settings.minOnsite;
+  let html = '<tr><td>Coverage</td>';
+  cover.forEach(c => {
+    if (c.blocked) { html += '<td>—</td>'; return; }
+    const low = min > 0 && c.onsite < min;
+    html += `<td><span class="cover-counts">
+      <span class="${low ? 'low' : ''}" title="On-site">🏢 ${c.onsite}</span>
+      <span title="Working from home">🏠 ${c.wfh}</span>
+      <span title="Away (leave, sick or non-working)">🏖️ ${c.leave}</span>
+    </span></td>`;
+  });
+  html += '</tr>';
+  $('rotaFoot').innerHTML = html;
+}
+
+function renderInsights() {
+  const container = $('insights');
+  const week = getWeekData();
+  const dates = getWeekDates();
+  const cover = computeCoverage(week, dates);
+  const min = settings.minOnsite;
+  const chips = [];
+
+  if (!dataLoaded) {
+    container.innerHTML = '<span class="insight">Loading rota…</span>';
+    return;
+  }
+
+  const workingDays = cover.map((c, i) => ({ c, i })).filter(x => !x.c.blocked);
+
+  const under = workingDays.filter(x => min > 0 && x.c.onsite < min);
+  if (under.length) {
+    const empty = under.filter(x => x.c.onsite === 0);
+    if (empty.length) {
+      chips.push({ level: 'danger', icon: '⚠', text: `No one on-site ${joinNatural(empty.map(x => DAYS[x.i]))}` });
+    }
+    const short = under.filter(x => x.c.onsite > 0);
+    if (short.length) {
+      chips.push({ level: 'warn', icon: '⚠', text: `Below ${min} on-site ${joinNatural(short.map(x => DAYS[x.i]))}` });
+    }
+  }
+
+  const heavyLeave = workingDays.filter(x => x.c.leave > 0 && x.c.leave >= Math.ceil(TEAM.length / 2));
+  if (heavyLeave.length) {
+    chips.push({ level: 'warn', icon: '🏖️', text: `Half the team away ${joinNatural(heavyLeave.map(x => DAYS[x.i]))}` });
+  }
+
+  const usesSD = workingDays.some(x => x.c.sd > 0);
+  if (usesSD) {
+    const gaps = workingDays.filter(x => x.c.sd === 0);
+    if (gaps.length) chips.push({ level: 'warn', icon: '🎧', text: `No Service Desk cover ${joinNatural(gaps.map(x => DAYS[x.i]))}` });
+  }
+
+  const usesSITD = workingDays.some(x => x.c.sitd > 0);
+  if (usesSITD) {
+    const gaps = workingDays.filter(x => x.c.sitd === 0);
+    if (gaps.length) chips.push({ level: 'warn', icon: '⏱️', text: `No SITD cover ${joinNatural(gaps.map(x => DAYS[x.i]))}` });
+  }
+
+  const unset = workingDays.reduce((sum, x) => sum + x.c.unset, 0);
+  const totalCells = workingDays.length * TEAM.length;
+  if (totalCells === 0) {
+    chips.push({ level: '', icon: '📅', text: 'No working days this week' });
+  } else if (unset === totalCells) {
+    chips.push({ level: '', icon: '📝', text: 'Nothing filled in yet' });
+  } else if (unset > 0) {
+    chips.push({ level: '', icon: '📝', text: `${unset} day${unset === 1 ? '' : 's'} still blank` });
+  } else if (chips.length === 0) {
+    chips.push({ level: 'ok', icon: '✓', text: 'Week complete, no cover gaps' });
+  }
+
+  container.innerHTML = chips.map(c =>
+    `<span class="insight ${c.level}"><span aria-hidden="true">${c.icon}</span>${escHtml(c.text)}</span>`
+  ).join('') + `
+    <label class="insight-setting" title="Warn when fewer than this many people are on-site">
+      Min on-site/day
+      <input type="number" id="minOnsite" min="0" max="${TEAM.length}" value="${min}">
+    </label>`;
+
+  $('minOnsite').addEventListener('change', e => setMinOnsite(e.target.value));
+}
+
+/* ══════════════════════════════════════════════════════════════
+   10. SUMMARY TEXT
+   ══════════════════════════════════════════════════════════════ */
+
+function notesForWeek(monday) { return summaryNotes[weekKey(monday || currentMonday)] || {}; }
+
+function leaveWeight(status) {
+  if (status === 'AL') return 1;
+  if (status === 'AL (AM)' || status === 'AL (PM)') return 0.5;
+  return 0;
+}
+
+/* Walks forward from the last AL day of the week to find the real return date.
+   Two fixes over the old version: half-days no longer extend a leave block
+   (you are at work for half of one), and a bank holiday only counts as part of
+   the leave if actual leave follows it — previously a trailing holiday with no
+   data after it produced a bogus "AL continues until…". */
+function scanALForward(person, fromDate) {
+  let cursor = addDays(fromDate, 1);
+  const limit = addDays(fromDate, 56);
+  let lastAL = new Date(fromDate);
+  let pendingBlocked = [];
+
+  while (cursor <= limit) {
+    if (isWeekend(cursor)) { cursor = addDays(cursor, 1); continue; }
+    if (getBlockedStatus(cursor)) { pendingBlocked.push(new Date(cursor)); cursor = addDays(cursor, 1); continue; }
+    const status = statusFor(person, cursor);
+    if (status === undefined || status === '') return { lastAL, returnDate: null };
+    if (status === 'AL') {
+      lastAL = new Date(cursor);
+      pendingBlocked = [];
+      cursor = addDays(cursor, 1);
+      continue;
+    }
+    return { lastAL, returnDate: new Date(cursor) };
+  }
+  return { lastAL, returnDate: null };
+}
+
+function scanALBackward(person, fromDate) {
+  let cursor = addDays(fromDate, -1);
+  const limit = addDays(fromDate, -56);
+  let earliest = new Date(fromDate);
+
+  while (cursor >= limit) {
+    if (isWeekend(cursor)) { cursor = addDays(cursor, -1); continue; }
+    if (getBlockedStatus(cursor)) { cursor = addDays(cursor, -1); continue; }
+    const status = statusFor(person, cursor);
+    if (status !== 'AL') break;
+    earliest = new Date(cursor);
+    cursor = addDays(cursor, -1);
+  }
+  return earliest;
+}
+
+/* Counts actual leave taken between two dates: full days as 1, halves as 0.5,
+   and bank holidays as 0 (they are not annual leave — the old build counted
+   them, inflating every leave total that spanned a holiday). */
+function countLeaveDays(person, startDate, endDate) {
+  let total = 0;
+  let cursor = startOfDay(startDate);
+  const end = startOfDay(endDate);
+  while (cursor <= end) {
+    if (!isWeekend(cursor) && !getBlockedStatus(cursor)) {
+      total += leaveWeight(statusFor(person, cursor) || '');
+    }
+    cursor = addDays(cursor, 1);
+  }
+  return total;
+}
+
+function dayNamesList(indices) {
+  if (!indices.length) return '';
+  if (indices.length === 1) return DAYS[indices[0]];
+  const consecutive = indices.every((v, i) => i === 0 || v === indices[i - 1] + 1);
+  if (consecutive && indices.length >= 3) return `${DAYS[indices[0]]} to ${DAYS[indices[indices.length - 1]]}`;
+  return joinNatural(indices.map(i => DAYS[i]));
+}
+
+function autoSummary(person, days, dates, showAll) {
+  const buckets = { AL: [], 'AL (AM)': [], 'AL (PM)': [], SD: [], SITD: [], Sick: [], Training: [], onsite: [], WFH: [], nwd: [] };
+  const custom = {};
+
+  days.forEach((status, i) => {
+    if (!status || getBlockedStatus(dates[i])) return;
+    if (buckets[status]) buckets[status].push(i);
+    else if (status.startsWith('On-site')) buckets.onsite.push(i);
+    else if (status === 'Non-Working Day') buckets.nwd.push(i);
+    else (custom[status] = custom[status] || []).push(i);
   });
 
-  if (blockedDays.length === 0) return '';
+  const notable = buckets.AL.length || buckets['AL (AM)'].length || buckets['AL (PM)'].length ||
+                  buckets.Sick.length || buckets.Training.length || Object.keys(custom).length;
+  if (!notable && !showAll) return '';
+
+  const sentences = [];
+  const weekStart = dates[0];
+
+  function relativeReturn(returnDate) {
+    const nextMonday = addDays(weekStart, 7);
+    const weekAfter = addDays(weekStart, 14);
+    const text = formatDateNatural(returnDate);
+    return (returnDate >= nextMonday && returnDate < weekAfter) ? `next ${text}` : text;
+  }
+
+  if (buckets.AL.length) {
+    const first = dates[buckets.AL[0]];
+    const last = dates[buckets.AL[buckets.AL.length - 1]];
+    const start = scanALBackward(person, first);
+    const startedEarlier = start < weekStart;
+    const ahead = scanALForward(person, last);
+    const periodEnd = ahead.returnDate ? addDays(ahead.returnDate, -1) : ahead.lastAL;
+    const total = countLeaveDays(person, startedEarlier ? start : first, periodEnd);
+    const count = ` (${formatDayCount(total)})`;
+    const consecutive = buckets.AL.every((v, i) => i === 0 || v === buckets.AL[i - 1] + 1);
+    const wholeWeek = dates.every((d, i) => getBlockedStatus(d) || days[i] === 'AL');
+
+    let text;
+    if (startedEarlier) text = `On annual leave from ${formatDateNatural(start)}`;
+    else if (ahead.returnDate || ahead.lastAL > last) text = `On annual leave from ${formatDateNatural(first)}`;
+    else if (wholeWeek) text = 'On annual leave all week';
+    else if (buckets.AL.length === 1) text = `On annual leave ${formatDateNatural(first)}`;
+    else if (consecutive) text = `On annual leave ${formatDateNatural(first)} to ${formatDateNatural(last)}`;
+    else text = `On annual leave ${dayNamesList(buckets.AL)}`;
+
+    if (ahead.returnDate) text += `, returns ${relativeReturn(ahead.returnDate)}`;
+    else if (ahead.lastAL > last) text += ` to ${formatDateShortNatural(ahead.lastAL)}`;
+
+    sentences.push(text + count);
+  }
+
+  if (buckets['AL (AM)'].length) sentences.push(`Annual leave (morning) ${dayNamesList(buckets['AL (AM)'])}`);
+  if (buckets['AL (PM)'].length) sentences.push(`Annual leave (afternoon) ${dayNamesList(buckets['AL (PM)'])}`);
+  if (buckets.Sick.length) sentences.push(`Off sick ${dayNamesList(buckets.Sick)}`);
+  if (buckets.Training.length) sentences.push(`On training ${dayNamesList(buckets.Training)}`);
+
+  Object.keys(custom).forEach(status => {
+    sentences.push(`${status} ${dayNamesList(custom[status])}`);
+  });
+
+  if (showAll) {
+    if (buckets.SD.length) sentences.push(`Working on Service Desk ${dayNamesList(buckets.SD)}`);
+    if (buckets.SITD.length) sentences.push(`Working on SITD ${dayNamesList(buckets.SITD)}`);
+    if (buckets.onsite.length) sentences.push(`On-site ${dayNamesList(buckets.onsite)}`);
+    if (buckets.WFH.length) sentences.push(`Working from home ${dayNamesList(buckets.WFH)}`);
+    if (buckets.nwd.length) sentences.push(`Non-working day ${dayNamesList(buckets.nwd)}`);
+  }
+
+  return sentences.join('. ');
+}
+
+function teamWideSummary(dates) {
+  const blocked = [];
+  dates.forEach((d, i) => {
+    const code = getBlockedStatus(d);
+    if (code) blocked.push({ index: i, date: d, label: closureInfo(code).label });
+  });
+  if (!blocked.length) return '';
 
   const parts = [];
   let i = 0;
-  while (i < blockedDays.length) {
-    const current = blockedDays[i];
+  while (i < blocked.length) {
     let j = i + 1;
-    while (j < blockedDays.length && blockedDays[j].label === current.label) {
-      j++;
-    }
-    const group = blockedDays.slice(i, j);
+    while (j < blocked.length && blocked[j].label === blocked[i].label && blocked[j].index === blocked[j - 1].index + 1) j++;
+    const group = blocked.slice(i, j);
     if (group.length === 1) {
-      parts.push(`${group[0].dayName} ${formatDateShortNatural(group[0].date)} is a ${group[0].label}`);
+      parts.push(`${DAYS[group[0].index]} ${formatDateShortNatural(group[0].date)} is a ${group[0].label}`);
     } else {
-      const dayNames = group.map(g => g.dayName);
-      const lastDay = dayNames.pop();
-      parts.push(`${dayNames.join(', ')} and ${lastDay} are ${group[0].label}s`);
+      parts.push(`${joinNatural(group.map(g => DAYS[g.index]))} are ${group[0].label}s`);
     }
     i = j;
   }
-
   return parts.join('. ');
 }
 
-// Helper: determine primary status category for a person this week
-function getPrimarySummaryStatus(person, days, dates) {
-  const dayInfo = days.map((status, i) => {
-    const blocked = getBlockedStatus(dates[i]);
-    return blocked ? null : status;
-  }).filter(Boolean);
-
-  if (dayInfo.length === 0) return null;
-
-  // Count occurrences
-  const counts = {};
-  dayInfo.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
-
-  // Priority: AL > custom > SD/SITD > WFH > On-site
-  const priorityOrder = ['AL', 'AL (AM)', 'AL (PM)'];
-  for (const p of priorityOrder) {
-    if (counts[p]) return p;
-  }
-
-  // Check for custom statuses
-  for (const s of Object.keys(counts)) {
-    if (!STATUSES[s] && !BLOCKED_STATUSES[s]) return s;
-  }
-
-  // Check assignment statuses
-  if (counts['SD']) return 'SD';
-  if (counts['SITD']) return 'SITD';
-
-  // Most common remaining
-  let top = null, topCount = 0;
-  Object.entries(counts).forEach(([s, c]) => {
-    if (c > topCount) { top = s; topCount = c; }
-  });
-  return top;
+function defaultIntro(dates) {
+  return `Everyone - please see below for the rota for w/c ${formatDate(dates[0])}:`;
 }
 
-function buildSummaryBadge(status) {
+/* ══════════════════════════════════════════════════════════════
+   11. SUMMARY PANEL
+   ══════════════════════════════════════════════════════════════ */
+
+const noteTimers = {};
+
+function saveNote(person, value, autoValue) {
+  const wk = weekKey(currentMonday);
+  const path = `teamRota/summaryNotes/${wk}/${person}`;
+  clearTimeout(noteTimers[person]);
+  noteTimers[person] = setTimeout(() => {
+    const trimmed = value.trim();
+    const isDefault = trimmed === (autoValue || '').trim();
+    const updates = {};
+    updates[path] = isDefault ? null : value;
+    dbUpdate(touchUpdates(updates));
+  }, 700);
+}
+
+/* The re-render leaves a focused textarea alone so a colleague's update can't
+   clobber what you are typing — but an explicit reset is your own instruction,
+   so put the generated text back straight away rather than waiting for blur. */
+function clearNote(person, row) {
+  clearTimeout(noteTimers[person]);
+  if (row) {
+    const ta = row.querySelector('textarea');
+    ta.value = ta.dataset.auto || '';
+    autoResize(ta);
+    row.querySelector('.reset-note').hidden = true;
+  }
+  const updates = {};
+  updates[`teamRota/summaryNotes/${weekKey(currentMonday)}/${person}`] = null;
+  dbUpdate(touchUpdates(updates), 'Reset to the auto-generated text');
+}
+
+function summaryBadge(status) {
   if (!status) return '';
   const style = getStatusStyle(status);
-  const icon = style.icon || '📌';
-  const bg = BG_MAP[status] || (style.bg && !style.bg.startsWith('var') ? style.bg : '#64748b');
-  const color = COLOR_MAP[status] || '#fff';
-  // Friendly label
-  const labels = {
-    'AL': 'Annual Leave (AL)',
-    'AL (AM)': 'Annual Leave (AM)',
-    'AL (PM)': 'Annual Leave (PM)',
-    'WFH': 'WFH',
-    'On-site (Full)': 'On-site (Full)',
-    'On-site (AM)': 'On-site (AM)',
-    'On-site (PM)': 'On-site (PM)',
-    'SD': 'Service Desk',
-    'SITD': 'SITD',
-    'Non-Working Day': 'Non-Working Day'
-  };
-  const label = labels[status] || status;
-  return `<span class="summary-badge" style="background:${bg};color:${color};">
-    <span class="badge-icon">${icon}</span>${label}
+  return `<span class="summary-badge" style="background:${style.bg};color:${style.fg};">
+    <span class="badge-icon" aria-hidden="true">${style.icon || '📌'}</span>${escHtml(style.long || status)}
   </span>`;
 }
 
-function generateSummaries() {
-  const week = getWeekData();
-  const dates = getWeekDates();
+/* Which status best represents a person's week, for the badge. */
+function primaryStatus(days, dates) {
+  const present = days.filter((s, i) => s && !getBlockedStatus(dates[i]));
+  if (!present.length) return null;
+  const counts = {};
+  present.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
 
-  // Team-wide blocked days
-  const teamWideContainer = document.getElementById('summaryTeamWide');
-  const teamWideSummary = generateTeamWideSummary(dates);
-  if (teamWideSummary) {
-    teamWideContainer.innerHTML = `<div class="summary-row team-wide">
-      <div class="avatar">${AVATAR_SVG}</div>
-      <span class="person-name">Everyone</span>
-      <span class="summary-divider"></span>
-      <div class="summary-content">
-        <textarea rows="1" oninput="autoResize(this)" data-person="Everyone">${teamWideSummary}</textarea>
-      </div>
-    </div>`;
-    teamWideContainer.querySelectorAll('textarea').forEach(ta => autoResize(ta));
-  } else {
-    teamWideContainer.innerHTML = '';
-  }
+  for (const s of ['AL', 'AL (AM)', 'AL (PM)', 'Sick']) if (counts[s]) return s;
+  for (const s of Object.keys(counts)) if (isCustomStatus(s)) return s;
+  for (const s of ['Training', 'SD', 'SITD']) if (counts[s]) return s;
 
-  // Per-person summaries
-  const container = document.getElementById('summaryItems');
-  let html = '';
-  let countWithContent = 0;
-
-  TEAM.forEach(person => {
-    const days = week[person] || ['', '', '', '', ''];
-    const summary = autoSummary(person, days, dates);
-    const primaryStatus = getPrimarySummaryStatus(person, days, dates);
-    const badge = summary ? buildSummaryBadge(primaryStatus) : '';
-
-    html += `<div class="summary-row">
-      <div class="avatar">${AVATAR_SVG}</div>
-      <span class="person-name">${person}</span>
-      <span class="summary-divider"></span>
-      <div class="summary-content">
-        ${badge}
-        <textarea rows="1" oninput="autoResize(this)" data-person="${person}">${summary}</textarea>
-      </div>
-    </div>`;
-
-    if (summary) countWithContent++;
-  });
-
-  container.innerHTML = html;
-  container.querySelectorAll('textarea').forEach(ta => autoResize(ta));
-
-  // Footer page count
-  const footer = document.getElementById('summaryFooter');
-  const total = TEAM.length;
-  const notable = countWithContent + (teamWideSummary ? 1 : 0);
-  footer.textContent = `${notable} notable entr${notable === 1 ? 'y' : 'ies'} · ${total} team members`;
-
-  const intro = document.getElementById('summaryIntro');
-  
-  // FIX APPLIED HERE: We only check if it hasn't been manually touched by the user.
-  if (!intro.dataset.touched) {
-    const dates2 = getWeekDates();
-    intro.value = `Everyone - please see below for the rota for w/c ${formatDate(dates2[0])}:`;
-  }
-}
-
-function regenerateSummaries() {
-  const intro = document.getElementById('summaryIntro');
-  intro.dataset.touched = '';
-  intro.value = '';
-  generateSummaries();
-}
-
-// ── NATURAL LANGUAGE HELPERS ──
-const FULL_DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-function formatDateNatural(d) {
-  const dayName = d.toLocaleDateString('en-GB', { weekday: 'long' });
-  const ord = formatDateOrdinal(d);
-  const month = d.toLocaleDateString('en-GB', { month: 'long' });
-  return `${dayName} ${ord} ${month}`;
-}
-
-function formatDateShortNatural(d) {
-  const ord = formatDateOrdinal(d);
-  const month = d.toLocaleDateString('en-GB', { month: 'long' });
-  return `${ord} ${month}`;
-}
-
-function dayListNatural(indices, dates) {
-  if (indices.length === 0) return '';
-  if (indices.length === 1) return formatDateNatural(dates[indices[0]]);
-  const isConsecutive = indices.every((v, i) => i === 0 || v === indices[i - 1] + 1);
-  if (isConsecutive && indices.length >= 2) {
-    return `${formatDateNatural(dates[indices[0]])} to ${formatDateNatural(dates[indices[indices.length - 1]])}`;
-  }
-  const names = indices.map(i => FULL_DAY_NAMES[i]);
-  if (names.length === 2) return names.join(' and ');
-  return names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
-}
-
-function findALReturnDate(person, lastALDate) {
-  let checkDate = new Date(lastALDate);
-  checkDate.setDate(checkDate.getDate() + 1);
-  const maxLookahead = 56;
-  const endDate = new Date(lastALDate);
-  endDate.setDate(endDate.getDate() + maxLookahead);
-  let lastConsecutiveAL = new Date(lastALDate);
-
-  while (checkDate <= endDate) {
-    const dow = checkDate.getDay();
-    if (dow === 0 || dow === 6) {
-      checkDate.setDate(checkDate.getDate() + 1);
-      continue;
-    }
-    const blocked = getBlockedStatus(checkDate);
-    if (blocked) {
-      lastConsecutiveAL = new Date(checkDate);
-      checkDate.setDate(checkDate.getDate() + 1);
-      continue;
-    }
-    const monday = getMonday(checkDate);
-    const mk = weekKey(monday);
-    const weekData = rotaData[mk];
-    if (!weekData || !weekData[person]) break;
-    const dayIdx = Math.round((checkDate - monday) / (1000 * 60 * 60 * 24));
-    if (dayIdx < 0 || dayIdx > 4) {
-      checkDate.setDate(checkDate.getDate() + 1);
-      continue;
-    }
-    const status = weekData[person][dayIdx];
-    if (status && status.startsWith('AL')) {
-      lastConsecutiveAL = new Date(checkDate);
-      checkDate.setDate(checkDate.getDate() + 1);
-      continue;
-    }
-    return { returnDate: new Date(checkDate), lastALDay: lastConsecutiveAL };
-  }
-
-  if (lastConsecutiveAL > lastALDate) {
-    return { returnDate: null, lastALDay: lastConsecutiveAL };
-  }
-  return null;
-}
-
-function findALStartDate(person, firstALDate) {
-  let checkDate = new Date(firstALDate);
-  checkDate.setDate(checkDate.getDate() - 1);
-  const maxLookback = 56;
-  const limitDate = new Date(firstALDate);
-  limitDate.setDate(limitDate.getDate() - maxLookback);
-  let earliestAL = new Date(firstALDate);
-
-  while (checkDate >= limitDate) {
-    const dow = checkDate.getDay();
-    if (dow === 0 || dow === 6) {
-      checkDate.setDate(checkDate.getDate() - 1);
-      continue;
-    }
-    const blocked = getBlockedStatus(checkDate);
-    if (blocked) {
-      checkDate.setDate(checkDate.getDate() - 1);
-      continue;
-    }
-    const monday = getMonday(checkDate);
-    const mk = weekKey(monday);
-    const weekData = rotaData[mk];
-    if (!weekData || !weekData[person]) break;
-    const dayIdx = Math.round((checkDate - monday) / (1000 * 60 * 60 * 24));
-    if (dayIdx < 0 || dayIdx > 4) {
-      checkDate.setDate(checkDate.getDate() - 1);
-      continue;
-    }
-    const status = weekData[person][dayIdx];
-    if (status && status.startsWith('AL')) {
-      earliestAL = new Date(checkDate);
-      checkDate.setDate(checkDate.getDate() - 1);
-      continue;
-    }
-    break;
-  }
-
-  return earliestAL;
-}
-
-function countDaysOff(person, startDate, endDate) {
-  let count = 0;
-  let checkDate = new Date(startDate);
-  checkDate.setHours(0, 0, 0, 0);
-  const end = new Date(endDate);
-  end.setHours(23, 59, 59, 999);
-
-  while (checkDate <= end) {
-    const dow = checkDate.getDay();
-    if (dow === 0 || dow === 6) {
-      checkDate.setDate(checkDate.getDate() + 1);
-      continue;
-    }
-    const blocked = getBlockedStatus(checkDate);
-    if (blocked) {
-      count++;
-      checkDate.setDate(checkDate.getDate() + 1);
-      continue;
-    }
-    const monday = getMonday(checkDate);
-    const mk = weekKey(monday);
-    const weekData = rotaData[mk];
-    if (weekData && weekData[person]) {
-      const dayIdx = Math.round((checkDate - monday) / (1000 * 60 * 60 * 24));
-      if (dayIdx >= 0 && dayIdx <= 4) {
-        const status = weekData[person][dayIdx];
-        if (status && status.startsWith('AL')) {
-          count++;
-        }
-      }
-    }
-    checkDate.setDate(checkDate.getDate() + 1);
-  }
-  return count;
-}
-
-function formatDayCount(n) {
-  if (n === 1) return '1 day';
-  return `${n} days`;
-}
-
-function autoSummary(person, days, dates) {
-  const showAll = document.getElementById('showAllEvents')?.checked || false;
-
-  const dayInfo = days.map((status, i) => {
-    const blocked = getBlockedStatus(dates[i]);
-    return { status: blocked ? null : status, blocked, index: i, date: dates[i] };
-  });
-
-  const alIndices = [];
-  const alPartialAM = [];
-  const alPartialPM = [];
-  const sdIndices = [];
-  const sitdIndices = [];
-  const customEntries = [];
-  const onsiteIndices = [];
-  const wfhIndices = [];
-  const nwdIndices = [];
-
-  dayInfo.forEach(d => {
-    if (d.blocked || !d.status) return;
-    if (d.status === 'AL') alIndices.push(d.index);
-    else if (d.status === 'AL (AM)') alPartialAM.push(d.index);
-    else if (d.status === 'AL (PM)') alPartialPM.push(d.index);
-    else if (d.status === 'SD') sdIndices.push(d.index);
-    else if (d.status === 'SITD') sitdIndices.push(d.index);
-    else if (d.status.startsWith('On-site')) onsiteIndices.push(d.index);
-    else if (d.status === 'WFH') wfhIndices.push(d.index);
-    else if (d.status === 'Non-Working Day') nwdIndices.push(d.index);
-    else customEntries.push({ index: d.index, status: d.status });
-  });
-
-  const hasUnusual = alIndices.length || alPartialAM.length || alPartialPM.length ||
-                     customEntries.length;
-
-  if (!hasUnusual && !showAll) return '';
-
-  const sentences = [];
-  const thisWeekStart = dates[0];
-
-  function formatReturnDateNatural(returnDate) {
-    const nextMonday = new Date(thisWeekStart);
-    nextMonday.setDate(nextMonday.getDate() + 7);
-    const upperMonday = new Date(thisWeekStart);
-    upperMonday.setDate(upperMonday.getDate() + 14);
-
-    const dayName = returnDate.toLocaleDateString('en-GB', { weekday: 'long' });
-    const ord = formatDateOrdinal(returnDate);
-    const month = returnDate.toLocaleDateString('en-GB', { month: 'long' });
-
-    if (returnDate >= nextMonday && returnDate < upperMonday) {
-      return `next ${dayName} ${ord} ${month}`;
-    }
-    return `${dayName} ${ord} ${month}`;
-  }
-
-  function formatDayNamesList(indices) {
-    if (indices.length === 0) return '';
-    if (indices.length === 1) return FULL_DAY_NAMES[indices[0]];
-    const isConsecutive = indices.every((v, i) => i === 0 || v === indices[i - 1] + 1);
-    if (isConsecutive && indices.length >= 3) {
-      return `${FULL_DAY_NAMES[indices[0]]} to ${FULL_DAY_NAMES[indices[indices.length - 1]]}`;
-    }
-    const names = indices.map(i => FULL_DAY_NAMES[i]);
-    if (names.length === 2) return names.join(' and ');
-    return names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
-  }
-
-  // ── Annual Leave (full days) ──
-  if (alIndices.length > 0) {
-    const allFullAL = dayInfo.filter(d => !d.blocked).every(d => d.status === 'AL');
-
-    const firstALThisWeek = dates[alIndices[0]];
-    const lastALThisWeek = dates[alIndices[alIndices.length - 1]];
-    
-    const alStart = findALStartDate(person, firstALThisWeek);
-    const startedBefore = alStart < thisWeekStart;
-
-    const lookAhead = findALReturnDate(person, lastALThisWeek);
-
-    const periodStart = startedBefore ? alStart : firstALThisWeek;
-    let periodEnd = lastALThisWeek;
-    let returnDate = null;
-    let continuesUnknown = false;
-
-    if (lookAhead && lookAhead.returnDate) {
-      periodEnd = new Date(lookAhead.returnDate);
-      periodEnd.setDate(periodEnd.getDate() - 1);
-      returnDate = lookAhead.returnDate;
-    } else if (lookAhead && !lookAhead.returnDate && lookAhead.lastALDay > lastALThisWeek) {
-      periodEnd = lookAhead.lastALDay;
-      continuesUnknown = true;
-    }
-
-    const totalDays = countDaysOff(person, periodStart, periodEnd);
-    const dayCountStr = ` (${formatDayCount(totalDays)})`;
-
-    if (allFullAL) {
-      let alText;
-      if (startedBefore) {
-        alText = `On annual leave from ${formatDateNatural(alStart)}`;
-      } else if (returnDate || continuesUnknown) {
-        alText = `On annual leave from ${formatDateNatural(firstALThisWeek)}`;
-      } else if (alIndices.length === 1) {
-        alText = `On annual leave ${formatDateNatural(firstALThisWeek)}`;
-      } else {
-        alText = 'On annual leave all week';
-      }
-
-      if (returnDate) {
-        alText += `, returns ${formatReturnDateNatural(returnDate)}${dayCountStr}`;
-      } else if (continuesUnknown) {
-        alText += `, AL continues until at least ${formatDateShortNatural(periodEnd)}${dayCountStr}`;
-      } else {
-        alText += dayCountStr;
-      }
-
-      sentences.push(alText);
-    } else {
-      const isConsecutive = alIndices.every((v, i) => i === 0 || v === alIndices[i - 1] + 1);
-
-      if (isConsecutive && alIndices.length >= 2) {
-        let alText;
-        if (startedBefore) {
-          alText = `On annual leave from ${formatDateNatural(alStart)}`;
-        } else if (returnDate || continuesUnknown) {
-          alText = `On annual leave from ${formatDateNatural(firstALThisWeek)}`;
-        } else {
-          alText = `On annual leave ${formatDateNatural(firstALThisWeek)} to ${formatDateNatural(lastALThisWeek)}`;
-        }
-
-        if (returnDate) {
-          alText += `, returns ${formatReturnDateNatural(returnDate)}${dayCountStr}`;
-        } else if (continuesUnknown) {
-          alText += `, AL continues until at least ${formatDateShortNatural(periodEnd)}${dayCountStr}`;
-        } else {
-          alText += dayCountStr;
-        }
-
-        sentences.push(alText);
-      } else if (alIndices.length === 1) {
-        let alText = `On annual leave ${formatDateNatural(firstALThisWeek)} for ${formatDayCount(1)}`;
-        sentences.push(alText);
-      } else {
-        let alText = `On annual leave ${formatDayNamesList(alIndices)} (${formatDayCount(alIndices.length)})`;
-        sentences.push(alText);
-      }
-    }
-  }
-
-  // ── Partial AL ──
-  if (alPartialAM.length > 0) sentences.push(`Annual leave (morning) ${formatDayNamesList(alPartialAM)}`);
-  if (alPartialPM.length > 0) sentences.push(`Annual leave (afternoon) ${formatDayNamesList(alPartialPM)}`);
-
-  // ── Custom statuses ──
-  const customGrouped = {};
-  customEntries.forEach(e => {
-    if (!customGrouped[e.status]) customGrouped[e.status] = [];
-    customGrouped[e.status].push(e.index);
-  });
-  Object.entries(customGrouped).forEach(([status, indices]) => {
-    sentences.push(`${status} ${formatDayNamesList(indices)}`);
-  });
-
-  // ── Routine ──
-  if (showAll) {
-    if (sdIndices.length > 0) sentences.push(`Working on Service Desk ${formatDayNamesList(sdIndices)}`);
-    if (sitdIndices.length > 0) sentences.push(`Working on SITD ${formatDayNamesList(sitdIndices)}`);
-    if (onsiteIndices.length > 0) sentences.push(`On-site ${formatDayNamesList(onsiteIndices)}`);
-    if (wfhIndices.length > 0) sentences.push(`Working from home ${formatDayNamesList(wfhIndices)}`);
-    if (nwdIndices.length > 0) sentences.push(`Non-working day ${formatDayNamesList(nwdIndices)}`);
-  }
-
-  if (sentences.length === 0) return '';
-  return sentences.join('. ');
+  let top = null, best = 0;
+  Object.keys(counts).forEach(s => { if (counts[s] > best) { top = s; best = counts[s]; } });
+  return top;
 }
 
 function autoResize(ta) {
@@ -1923,181 +2453,356 @@ function autoResize(ta) {
   ta.style.height = ta.scrollHeight + 'px';
 }
 
-// ── COPY FUNCTIONS ──
-function copyTableHTML() {
+function buildSummaryRow(key, name, teamWide) {
+  const row = document.createElement('div');
+  row.className = 'summary-row' + (teamWide ? ' team-wide' : '');
+  row.dataset.key = key;
+  row.innerHTML = `
+    <span class="avatar">${teamWide ? AVATAR_SVG : escHtml(initials(name))}</span>
+    <span class="person-name"></span>
+    <span class="summary-divider"></span>
+    <div class="summary-content">
+      <span class="badge-slot"></span>
+      <textarea rows="1" aria-label="Summary for ${escHtml(name)}" placeholder="Nothing notable"></textarea>
+      <button type="button" class="reset-note" hidden title="Discard your edit and use the generated text">↻ auto</button>
+    </div>`;
+  return row;
+}
+
+function renderSummaries() {
+  const week = getWeekData();
+  const dates = getWeekDates();
+  const showAll = $('showAllEvents').checked;
+  const notes = notesForWeek();
+
+  /* Intro */
+  const intro = $('summaryIntro');
+  const autoIntro = defaultIntro(dates);
+  intro.dataset.auto = autoIntro;
+  if (document.activeElement !== intro) {
+    intro.value = notes[INTRO_KEY] !== undefined ? notes[INTRO_KEY] : autoIntro;
+  }
+
+  /* Team-wide row */
+  const teamWideContainer = $('summaryTeamWide');
+  const autoTeamWide = teamWideSummary(dates);
+  const teamWideValue = notes[EVERYONE_KEY] !== undefined ? notes[EVERYONE_KEY] : autoTeamWide;
+  if (autoTeamWide || notes[EVERYONE_KEY]) {
+    let row = teamWideContainer.firstElementChild;
+    if (!row) { row = buildSummaryRow(EVERYONE_KEY, 'Everyone', true); teamWideContainer.appendChild(row); }
+    updateSummaryRow(row, 'Everyone', '', teamWideValue, autoTeamWide, notes[EVERYONE_KEY] !== undefined);
+  } else {
+    teamWideContainer.innerHTML = '';
+  }
+
+  /* Per-person rows — rebuilt only when the team changes, so live edits and
+     focus survive a remote update landing mid-typing. */
+  const container = $('summaryItems');
+  const signature = TEAM.join(' ');
+  if (container.dataset.signature !== signature) {
+    container.innerHTML = '';
+    TEAM.forEach(person => container.appendChild(buildSummaryRow(person, person, false)));
+    container.dataset.signature = signature;
+  }
+
+  let notable = autoTeamWide || notes[EVERYONE_KEY] ? 1 : 0;
+  TEAM.forEach((person, i) => {
+    const row = container.children[i];
+    const days = week[person] || ['', '', '', '', ''];
+    const auto = autoSummary(person, days, dates, showAll);
+    const override = notes[person];
+    const value = override !== undefined ? override : auto;
+    const badge = value ? summaryBadge(primaryStatus(days, dates)) : '';
+    updateSummaryRow(row, person, badge, value, auto, override !== undefined);
+    if (value.trim()) notable++;
+  });
+
+  $('summaryFooter').textContent =
+    `${notable} notable entr${notable === 1 ? 'y' : 'ies'} · ${TEAM.length} team member${TEAM.length === 1 ? '' : 's'}`;
+}
+
+function updateSummaryRow(row, name, badgeHtml, value, autoValue, isOverridden) {
+  row.dataset.key = row.dataset.key || name;
+  row.querySelector('.person-name').textContent = name;
+  row.querySelector('.badge-slot').innerHTML = badgeHtml;
+  const ta = row.querySelector('textarea');
+  ta.dataset.auto = autoValue || '';
+  if (document.activeElement !== ta && ta.value !== value) {
+    ta.value = value;
+  }
+  autoResize(ta);
+  row.querySelector('.reset-note').hidden = !isOverridden;
+}
+
+function onSummaryInput(e) {
+  const ta = e.target;
+  if (ta.tagName !== 'TEXTAREA') return;
+  autoResize(ta);
+  const row = ta.closest('.summary-row');
+  if (!row) return;
+  row.querySelector('.reset-note').hidden = ta.value.trim() === (ta.dataset.auto || '').trim();
+  saveNote(row.dataset.key, ta.value, ta.dataset.auto);
+}
+
+function onSummaryClick(e) {
+  const btn = e.target.closest('.reset-note');
+  if (!btn) return;
+  const row = btn.closest('.summary-row');
+  clearNote(row.dataset.key, row);
+}
+
+$('summaryItems').addEventListener('input', onSummaryInput);
+$('summaryItems').addEventListener('click', onSummaryClick);
+$('summaryTeamWide').addEventListener('input', onSummaryInput);
+$('summaryTeamWide').addEventListener('click', onSummaryClick);
+
+$('summaryIntro').addEventListener('input', e => {
+  saveNote(INTRO_KEY, e.target.value, e.target.dataset.auto);
+});
+
+$('regenBtn').addEventListener('click', () => {
+  const wk = weekKey(currentMonday);
+  if (!Object.keys(notesForWeek()).length) { showToast('No manual edits to reset'); return; }
+  if (!confirm('Discard all manual edits to this week\'s summary?')) return;
+  dbUpdate(touchUpdates({ [`teamRota/summaryNotes/${wk}`]: null }), 'Summary reset');
+});
+
+$('showAllEvents').addEventListener('change', e => {
+  try { localStorage.setItem('sitd-show-all', e.target.checked ? '1' : '0'); } catch (_) {}
+  renderSummaries();
+});
+
+/* ══════════════════════════════════════════════════════════════
+   12. COPY / EXPORT
+   ══════════════════════════════════════════════════════════════ */
+
+async function copyToClipboard(plain, html) {
+  try {
+    if (html && navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
+      await navigator.clipboard.write([new ClipboardItem({
+        'text/html': new Blob([html], { type: 'text/html' }),
+        'text/plain': new Blob([plain], { type: 'text/plain' })
+      })]);
+      return 'rich';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      await navigator.clipboard.writeText(plain);
+      return 'plain';
+    }
+  } catch (_) { /* fall through to the legacy path */ }
+
+  // Legacy fallback — also covers file:// and older browsers, where the async
+  // Clipboard API is unavailable and the old code threw an uncaught TypeError.
+  const ta = document.createElement('textarea');
+  ta.value = plain;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+  document.body.removeChild(ta);
+  return ok ? 'plain' : null;
+}
+
+function buildTableHTML() {
   const dates = getWeekDates();
   const week = getWeekData();
-  const monthName = dates[0].toLocaleDateString('en-GB', { month: 'long' });
+  const month = dates[0].toLocaleDateString('en-GB', { month: 'long' });
+  const cell = 'padding:5px 10px;border:1px solid #ccc;font-size:10pt;';
 
-  let html = `<table style="border-collapse:collapse;font-family:Segoe UI,Calibri,Arial,sans-serif;font-size:11pt;width:100%;">`;
-
-  html += `<tr>`;
-  html += `<td style="padding:6px 10px;font-weight:bold;background:#2563eb;color:#fff;border:1px solid #ccc;font-size:11pt;">${monthName}</td>`;
+  let html = '<table style="border-collapse:collapse;font-family:Segoe UI,Calibri,Arial,sans-serif;font-size:11pt;">';
+  html += '<tr>';
+  html += `<td style="${cell}font-weight:bold;background:#2563eb;color:#fff;font-size:11pt;">${escHtml(month)}</td>`;
   DAYS.forEach(day => {
-    html += `<td style="padding:6px 10px;font-weight:bold;background:#2563eb;color:#fff;border:1px solid #ccc;text-align:center;font-size:11pt;">${day}</td>`;
+    html += `<td style="${cell}font-weight:bold;background:#2563eb;color:#fff;text-align:center;font-size:11pt;">${day}</td>`;
   });
-  html += `</tr>`;
-
-  html += `<tr>`;
-  html += `<td style="padding:4px 10px;font-weight:bold;background:#f0f0f0;border:1px solid #ccc;font-size:10pt;">Date</td>`;
+  html += '</tr><tr>';
+  html += `<td style="${cell}font-weight:bold;background:#f0f0f0;">Date</td>`;
   dates.forEach(d => {
-    html += `<td style="padding:4px 10px;text-align:center;background:#f0f0f0;border:1px solid #ccc;font-size:10pt;font-weight:bold;">${formatDateOrdinal(d)}</td>`;
+    html += `<td style="${cell}text-align:center;background:#f0f0f0;font-weight:bold;">${escHtml(formatDateOrdinal(d))}</td>`;
   });
-  html += `</tr>`;
+  html += '</tr>';
 
   TEAM.forEach(person => {
-    html += `<tr>`;
-    html += `<td style="padding:5px 10px;font-weight:bold;border:1px solid #ccc;font-size:10pt;">${person}</td>`;
-    const days = week[person] || ['', '', '', '', ''];
-    days.forEach((status, i) => {
-      const blocked = getBlockedStatus(dates[i]);
-      let label, bg, color;
+    html += `<tr><td style="${cell}font-weight:bold;">${escHtml(person)}</td>`;
+    for (let d = 0; d < 5; d++) {
+      const blocked = getBlockedStatus(dates[d]);
+      let label, bg, fg;
       if (blocked) {
-        const bStyle = BLOCKED_STATUSES[blocked] || {};
-        label = bStyle.label || blocked;
-        bg = bStyle.bg || '#374151';
-        color = bStyle.text || '#fff';
+        const info = closureInfo(blocked);
+        label = info.label; bg = info.bg; fg = info.fg;
       } else {
+        const status = week[person][d];
         const style = status ? getStatusStyle(status) : null;
         label = status || '';
-        // Resolve CSS var for clipboard (use fallback hex)
-        bg = style ? resolveBg(status, style) : '#fff';
-        color = style ? resolveColor(status, style) : '#999';
+        bg = style ? style.bg : '#ffffff';
+        fg = style ? style.fg : '#999999';
       }
-      html += `<td style="padding:5px 10px;text-align:center;background:${bg};color:${color};border:1px solid #ccc;font-weight:600;font-size:10pt;">${label}</td>`;
-    });
-    html += `</tr>`;
+      html += `<td style="${cell}text-align:center;background:${bg};color:${fg};font-weight:600;">${escHtml(label)}</td>`;
+    }
+    html += '</tr>';
   });
-
-  html += `</table>`;
-
-  const blob = new Blob([html], { type: 'text/html' });
-  const plainText = generatePlainTextTable();
-  const item = new ClipboardItem({
-    'text/html': blob,
-    'text/plain': new Blob([plainText], { type: 'text/plain' })
-  });
-
-  navigator.clipboard.write([item]).then(() => {
-    showToast('Rota table copied to clipboard!');
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = plainText;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('Copied as plain text');
-  });
+  return html + '</table>';
 }
 
-// Resolve CSS variables to hex for clipboard HTML
-const BG_MAP = {
-  'On-site (Full)': '#1a9a5a', 'On-site (AM)': '#2db872', 'On-site (PM)': '#2db872',
-  'WFH': '#d4960a', 'AL': '#d63031', 'AL (AM)': '#d63031', 'AL (PM)': '#d63031',
-  'SD': '#0891b2', 'SITD': '#7c3aed', 'Non-Working Day': '#64748b'
-};
-const COLOR_MAP = {
-  'On-site (Full)': '#fff', 'On-site (AM)': '#fff', 'On-site (PM)': '#fff',
-  'WFH': '#fff', 'AL': '#fff', 'AL (AM)': '#fff', 'AL (PM)': '#fff',
-  'SD': '#fff', 'SITD': '#fff', 'Non-Working Day': '#fff'
-};
-
-function resolveBg(status, style) {
-  if (BG_MAP[status]) return BG_MAP[status];
-  if (style.bg && !style.bg.startsWith('var')) return style.bg;
-  return '#ec4899';
-}
-function resolveColor(status, style) {
-  if (COLOR_MAP[status]) return COLOR_MAP[status];
-  if (style.text && !style.text.startsWith('var')) return style.text;
-  return '#fff';
-}
-
-function generatePlainTextTable() {
+function buildTablePlain() {
   const dates = getWeekDates();
   const week = getWeekData();
-  let lines = [];
-  lines.push(['', ...DAYS].join('\t'));
-  lines.push(['Date', ...dates.map(formatDateOrdinal)].join('\t'));
-
+  const rows = [
+    ['', ...DAYS].join('\t'),
+    ['Date', ...dates.map(formatDateOrdinal)].join('\t')
+  ];
   TEAM.forEach(person => {
-    const days = week[person] || ['', '', '', '', ''];
-    const display = days.map((s, i) => {
-      const blocked = getBlockedStatus(dates[i]);
-      if (blocked) return BLOCKED_STATUSES[blocked]?.label || blocked;
-      return s;
-    });
-    lines.push([person, ...display].join('\t'));
+    rows.push([person, ...dates.map((d, i) => {
+      const blocked = getBlockedStatus(d);
+      return blocked ? closureInfo(blocked).label : week[person][i];
+    })].join('\t'));
   });
-
-  return lines.join('\n');
+  return rows.join('\n');
 }
 
-function copySummaryText() {
-  const intro = document.getElementById('summaryIntro').value;
-  const teamWideItems = document.querySelectorAll('#summaryTeamWide textarea');
-  const items = document.querySelectorAll('#summaryItems textarea');
-  let lines = [];
+function buildSummaryPlain() {
+  const lines = [];
+  const intro = $('summaryIntro').value.trim();
+  if (intro) { lines.push(intro); lines.push(''); }
 
-  if (intro.trim()) lines.push(intro.trim());
-  lines.push('');
-
-  teamWideItems.forEach(ta => {
+  document.querySelectorAll('#summaryTeamWide textarea').forEach(ta => {
     const text = ta.value.trim();
-    if (text) {
-      lines.push(`• ${text}`);
-    }
+    if (text) lines.push(`• ${text}`);
   });
-
-  items.forEach(ta => {
-    const text = ta.value.trim();
-    const person = ta.dataset.person;
-    if (text) {
-      lines.push(`• ${person}: ${text}`);
-    }
+  document.querySelectorAll('#summaryItems .summary-row').forEach(row => {
+    const text = row.querySelector('textarea').value.trim();
+    if (text) lines.push(`• ${row.dataset.key}: ${text}`);
   });
 
   lines.push('');
   lines.push('Let me know if I\'ve missed anything');
-
-  const text = lines.join('\n');
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Summary copied to clipboard!');
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('Summary copied!');
-  });
+  return lines.join('\n');
 }
 
-function clearWeek() {
-  if (!confirm('Clear all statuses for this week?')) return;
-  const key = weekKey(currentMonday);
-  delete rotaData[key];
-  db.ref(`teamRota/rotaData/${key}`).remove();
-  saveLastUpdated();
+$('copyTableBtn').addEventListener('click', async () => {
+  const result = await copyToClipboard(buildTablePlain(), buildTableHTML());
+  showToast(result === 'rich' ? 'Rota table copied — paste into Teams or Outlook'
+          : result === 'plain' ? 'Copied as plain text'
+          : 'Could not copy — select the table and copy manually', !result);
+});
+
+$('copySummaryBtn').addEventListener('click', async () => {
+  const result = await copyToClipboard(buildSummaryPlain(), null);
+  showToast(result ? 'Summary copied to clipboard' : 'Could not copy to clipboard', !result);
+});
+
+$('exportBtn').addEventListener('click', () => {
+  const payload = { exportedAt: new Date().toISOString(), team: TEAM, rotaData, customStatuses, closures: closureOverrides, summaryNotes, settings };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sitd-rota-backup-${dateKey(new Date())}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Backup downloaded');
+});
+
+/* ══════════════════════════════════════════════════════════════
+   13. CHROME: TOAST, META, THEME, EVENTS
+   ══════════════════════════════════════════════════════════════ */
+
+let toastTimer = null;
+function showToast(message, isError) {
+  const toast = $('toast');
+  toast.textContent = message;
+  toast.classList.toggle('error', !!isError);
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+function updateMetaDisplay() {
+  const el = $('updateMeta');
+  if (!lastUpdatedTime) { el.textContent = dataLoaded ? 'No changes yet' : 'Loading…'; return; }
+  const diff = Math.max(0, Math.floor((Date.now() - lastUpdatedTime.getTime()) / 1000));
+  if (diff < 10) el.textContent = 'Updated just now';
+  else if (diff < 60) el.textContent = `Updated ${diff}s ago`;
+  else if (diff < 3600) { const m = Math.floor(diff / 60); el.textContent = `Updated ${m} min${m > 1 ? 's' : ''} ago`; }
+  else if (diff < 86400) { const h = Math.floor(diff / 3600); el.textContent = `Updated ${h} hour${h > 1 ? 's' : ''} ago`; }
+  else { const d = Math.floor(diff / 86400); el.textContent = `Updated ${d} day${d > 1 ? 's' : ''} ago`; }
+}
+setInterval(updateMetaDisplay, 15000);
+
+/* Theme: auto → light → dark, remembered locally. */
+function applyTheme(mode) {
+  const root = document.documentElement;
+  if (mode === 'auto') root.removeAttribute('data-theme');
+  else root.setAttribute('data-theme', mode);
+  $('themeBtn').title = `Theme: ${mode} (click to change)`;
+  $('themeBtn').textContent = mode === 'dark' ? '🌙' : mode === 'light' ? '☀️' : '◐';
+}
+
+let themeMode = 'auto';
+try { themeMode = localStorage.getItem('sitd-theme') || 'auto'; } catch (_) {}
+if (themeMode === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  applyTheme('auto');
+} else {
+  applyTheme(themeMode);
+}
+
+$('themeBtn').addEventListener('click', () => {
+  themeMode = themeMode === 'auto' ? 'light' : themeMode === 'light' ? 'dark' : 'auto';
+  try { localStorage.setItem('sitd-theme', themeMode); } catch (_) {}
+  applyTheme(themeMode);
+});
+
+function changeWeek(delta) {
+  currentMonday = addDays(currentMonday, delta * 7);
+  closeMenu(false);
   render();
 }
 
-// ── TOAST ──
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2500);
-}
+$('prevWeek').addEventListener('click', () => changeWeek(-1));
+$('nextWeek').addEventListener('click', () => changeWeek(1));
+$('todayBtn').addEventListener('click', () => { currentMonday = getMonday(new Date()); closeMenu(false); render(); });
+$('copyPrevBtn').addEventListener('click', copyPreviousWeek);
+$('clearWeekBtn').addEventListener('click', clearWeek);
+$('undoBtn').addEventListener('click', undo);
 
-// ── INIT ──
-render();
-
-document.getElementById('summaryIntro').addEventListener('input', function () {
-  this.dataset.touched = 'true';
+$('rotaBody').addEventListener('click', e => {
+  const btn = e.target.closest('.status-btn:not(.blocked), .name-btn');
+  if (!btn) return;
+  if (btn.classList.contains('name-btn')) {
+    openPersonMenu(btn, TEAM[Number(btn.dataset.person)]);
+  } else {
+    openStatusMenu(btn, TEAM[Number(btn.dataset.person)], Number(btn.dataset.day));
+  }
 });
+
+$('rotaHead').addEventListener('click', e => {
+  const btn = e.target.closest('.day-head');
+  if (btn) openDayMenu(btn, Number(btn.dataset.day));
+});
+
+document.addEventListener('keydown', e => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) ||
+                 document.activeElement.isContentEditable;
+  if (e.key === 'Escape') { closeMenu(true); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !typing) { e.preventDefault(); undo(); return; }
+  if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
+  if ($('loginOverlay').hidden === false) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); changeWeek(-1); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); changeWeek(1); }
+  else if (e.key.toLowerCase() === 't') { currentMonday = getMonday(new Date()); render(); }
+});
+
+/* ══════════════════════════════════════════════════════════════
+   14. INIT
+   ══════════════════════════════════════════════════════════════ */
+
+try { $('showAllEvents').checked = localStorage.getItem('sitd-show-all') === '1'; } catch (_) {}
+refreshUndoButton();
+render();
 </script>
 </body>
 </html>
