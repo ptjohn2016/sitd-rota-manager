@@ -520,9 +520,31 @@
     letter-spacing: 0.5px;
     color: var(--text-muted);
   }
-  .cover-counts { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
-  .cover-counts span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
-  .cover-counts .low { color: var(--danger); font-weight: 800; }
+  .cover-halves {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-weight: 700;
+    font-size: 11.5px;
+    white-space: nowrap;
+  }
+  .cover-halves .none { color: var(--danger); font-weight: 800; }
+  .cover-halves .low { color: var(--warn); font-weight: 800; }
+  .cover-sep { opacity: 0.35; font-weight: 400; }
+
+  .cover-extra {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .cover-off { opacity: 0.4; }
 
   /* ── MENU ── */
   .menu-overlay { display: none; position: fixed; inset: 0; z-index: 99; }
@@ -2131,38 +2153,57 @@ function renderTable() {
   renderCoverageRow(week, dates);
 }
 
+/* On-site cover is counted in half-days, because a day is only genuinely
+   covered if someone is here for both halves of it:
+     On-site (Full) → covers morning and afternoon
+     On-site (AM)   → morning only
+     On-site (PM)   → afternoon only
+   A day can also be fully covered by two different people (one AM, one PM).
+
+   SD means the person is lent to the Service Desk that day, so they are not
+   SITD on-site cover — but they are not "away" either, so they are counted
+   separately rather than folded into the absence total. */
 function computeCoverage(week, dates) {
   return dates.map((date, d) => {
     const blocked = getBlockedStatus(date);
-    const counts = { onsite: 0, wfh: 0, leave: 0, sd: 0, sitd: 0, other: 0, unset: 0, blocked: !!blocked };
-    if (blocked) return counts;
+    const c = { am: 0, pm: 0, full: 0, wfh: 0, away: 0, sd: 0, other: 0, unset: 0, blocked: !!blocked };
+    if (blocked) return c;
     TEAM.forEach(person => {
       const s = (week[person] || [])[d];
-      if (!s) { counts.unset++; return; }
-      if (s.startsWith('On-site')) counts.onsite++;
-      else if (s === 'WFH') counts.wfh++;
-      else if (s.startsWith('AL') || s === 'Sick') counts.leave++;
-      else if (s === 'Non-Working Day') counts.leave++;
-      else counts.other++;
-      if (s === 'SD') counts.sd++;
-      if (s === 'SITD') counts.sitd++;
+      if (!s) { c.unset++; return; }
+      if (s === 'On-site (Full)') { c.full++; c.am++; c.pm++; }
+      else if (s === 'On-site (AM)') c.am++;
+      else if (s === 'On-site (PM)') c.pm++;
+      else if (s === 'WFH') c.wfh++;
+      else if (s === 'SD') c.sd++;
+      else if (s.startsWith('AL') || s === 'Sick' || s === 'Non-Working Day') c.away++;
+      else c.other++;   // training or a custom status — everyone lands somewhere
     });
-    return counts;
+    return c;
   });
 }
 
 function renderCoverageRow(week, dates) {
   const cover = computeCoverage(week, dates);
   const min = settings.minOnsite;
-  let html = '<tr><td>Coverage</td>';
+  const cls = n => (n === 0 ? 'none' : (min > 0 && n < min ? 'low' : ''));
+
+  let html = '<tr><td>On-site cover</td>';
   cover.forEach(c => {
-    if (c.blocked) { html += '<td>—</td>'; return; }
-    const low = min > 0 && c.onsite < min;
-    html += `<td><span class="cover-counts">
-      <span class="${low ? 'low' : ''}" title="On-site">🏢 ${c.onsite}</span>
-      <span title="Working from home">🏠 ${c.wfh}</span>
-      <span title="Away (leave, sick or non-working)">🏖️ ${c.leave}</span>
-    </span></td>`;
+    if (c.blocked) { html += '<td><span class="cover-off">—</span></td>'; return; }
+    const extras = [];
+    if (c.wfh) extras.push(`<span title="Working from home">🏠 ${c.wfh}</span>`);
+    if (c.away) extras.push(`<span title="Away — leave, sick or non-working">🏖️ ${c.away}</span>`);
+    if (c.sd) extras.push(`<span title="On Service Desk — not available to SITD">🎧 ${c.sd}</span>`);
+    if (c.other) extras.push(`<span title="Training or another commitment">📌 ${c.other}</span>`);
+    html += `<td>
+      <span class="cover-halves">
+        <span class="${cls(c.am)}" title="On-site in the morning">AM ${c.am}</span>
+        <span class="cover-sep">/</span>
+        <span class="${cls(c.pm)}" title="On-site in the afternoon">PM ${c.pm}</span>
+      </span>
+      ${extras.length ? `<span class="cover-extra">${extras.join('')}</span>` : ''}
+    </td>`;
   });
   html += '</tr>';
   $('rotaFoot').innerHTML = html;
@@ -2183,33 +2224,23 @@ function renderInsights() {
 
   const workingDays = cover.map((c, i) => ({ c, i })).filter(x => !x.c.blocked);
 
-  const under = workingDays.filter(x => min > 0 && x.c.onsite < min);
-  if (under.length) {
-    const empty = under.filter(x => x.c.onsite === 0);
-    if (empty.length) {
-      chips.push({ level: 'danger', icon: '⚠', text: `No one on-site ${joinNatural(empty.map(x => DAYS[x.i]))}` });
-    }
-    const short = under.filter(x => x.c.onsite > 0);
-    if (short.length) {
-      chips.push({ level: 'warn', icon: '⚠', text: `Below ${min} on-site ${joinNatural(short.map(x => DAYS[x.i]))}` });
-    }
-  }
+  /* Cover gaps, worst first. A day falls into exactly one of these buckets so
+     the same day is never reported twice. */
+  const noCover  = workingDays.filter(x => x.c.am === 0 && x.c.pm === 0);
+  const noPM     = workingDays.filter(x => x.c.am > 0 && x.c.pm === 0);
+  const noAM     = workingDays.filter(x => x.c.pm > 0 && x.c.am === 0);
+  const thin     = workingDays.filter(x => x.c.am > 0 && x.c.pm > 0 && min > 0 && Math.min(x.c.am, x.c.pm) < min);
 
-  const heavyLeave = workingDays.filter(x => x.c.leave > 0 && x.c.leave >= Math.ceil(TEAM.length / 2));
+  const days = list => joinNatural(list.map(x => DAYS[x.i]));
+
+  if (noCover.length) chips.push({ level: 'danger', icon: '⚠', text: `No on-site cover ${days(noCover)}` });
+  if (noPM.length)    chips.push({ level: 'warn', icon: '🌆', text: `No afternoon on-site cover ${days(noPM)}` });
+  if (noAM.length)    chips.push({ level: 'warn', icon: '🌅', text: `No morning on-site cover ${days(noAM)}` });
+  if (thin.length)    chips.push({ level: 'warn', icon: '⚠', text: `Below ${min} on-site ${days(thin)}` });
+
+  const heavyLeave = workingDays.filter(x => x.c.away > 0 && x.c.away >= Math.ceil(TEAM.length / 2));
   if (heavyLeave.length) {
-    chips.push({ level: 'warn', icon: '🏖️', text: `Half the team away ${joinNatural(heavyLeave.map(x => DAYS[x.i]))}` });
-  }
-
-  const usesSD = workingDays.some(x => x.c.sd > 0);
-  if (usesSD) {
-    const gaps = workingDays.filter(x => x.c.sd === 0);
-    if (gaps.length) chips.push({ level: 'warn', icon: '🎧', text: `No Service Desk cover ${joinNatural(gaps.map(x => DAYS[x.i]))}` });
-  }
-
-  const usesSITD = workingDays.some(x => x.c.sitd > 0);
-  if (usesSITD) {
-    const gaps = workingDays.filter(x => x.c.sitd === 0);
-    if (gaps.length) chips.push({ level: 'warn', icon: '⏱️', text: `No SITD cover ${joinNatural(gaps.map(x => DAYS[x.i]))}` });
+    chips.push({ level: 'warn', icon: '🏖️', text: `Half the team away ${days(heavyLeave)}` });
   }
 
   const unset = workingDays.reduce((sum, x) => sum + x.c.unset, 0);
@@ -2227,8 +2258,8 @@ function renderInsights() {
   container.innerHTML = chips.map(c =>
     `<span class="insight ${c.level}"><span aria-hidden="true">${c.icon}</span>${escHtml(c.text)}</span>`
   ).join('') + `
-    <label class="insight-setting" title="Warn when fewer than this many people are on-site">
-      Min on-site/day
+    <label class="insight-setting" title="Warn when fewer than this many people are on-site for either half of the day">
+      Min on-site
       <input type="number" id="minOnsite" min="0" max="${TEAM.length}" value="${min}">
     </label>`;
 
