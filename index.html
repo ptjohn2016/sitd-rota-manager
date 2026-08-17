@@ -26,12 +26,16 @@
     --accent: #4f6df5;
     --accent-hover: #3b5bdb;
     --accent-light: rgba(79, 109, 245, 0.12);
-    --warn: #b45309;
-    --warn-bg: rgba(245, 158, 11, 0.16);
-    --danger: #b91c1c;
-    --danger-bg: rgba(220, 38, 38, 0.14);
-    --ok: #15803d;
-    --ok-bg: rgba(22, 163, 74, 0.14);
+    /* Status chips sit directly on the background photo, so their fills are
+       near-opaque rather than a light tint — a 15%-alpha wash lets the image
+       through and the text stops being readable. */
+    --chip-bg: rgba(255, 255, 255, 0.88);
+    --warn: #7c4a03;
+    --warn-bg: rgba(253, 240, 199, 0.94);
+    --danger: #991b1b;
+    --danger-bg: rgba(254, 226, 226, 0.94);
+    --ok: #14532d;
+    --ok-bg: rgba(214, 245, 224, 0.94);
     --page-tint: rgba(0, 0, 0, 0.05);
     --field: rgba(255, 255, 255, 0.6);
     --field-focus: rgba(255, 255, 255, 0.85);
@@ -65,12 +69,13 @@
     --accent: #8ea3ff;
     --accent-hover: #a5b6ff;
     --accent-light: rgba(142, 163, 255, 0.16);
-    --warn: #fbbf24;
-    --warn-bg: rgba(245, 158, 11, 0.18);
+    --chip-bg: rgba(30, 33, 42, 0.88);
+    --warn: #fcd34d;
+    --warn-bg: rgba(72, 48, 8, 0.92);
     --danger: #fca5a5;
-    --danger-bg: rgba(220, 38, 38, 0.22);
+    --danger-bg: rgba(80, 22, 22, 0.92);
     --ok: #86efac;
-    --ok-bg: rgba(22, 163, 74, 0.22);
+    --ok-bg: rgba(20, 70, 42, 0.92);
     --page-tint: rgba(10, 11, 16, 0.62);
     --field: rgba(255, 255, 255, 0.07);
     --field-focus: rgba(255, 255, 255, 0.12);
@@ -143,6 +148,8 @@
     gap: 14px;
   }
 
+  /* The header sits straight on the background photo with no panel behind it,
+     so it needs a shadow to stay readable over the lighter areas. */
   .header-left h1 {
     font-size: 26px;
     font-weight: 800;
@@ -150,13 +157,20 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
   }
 
   .header-left p {
     color: var(--text-secondary);
     font-size: 13.5px;
-    font-weight: 500;
+    font-weight: 600;
     margin-top: 2px;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
+  }
+
+  :root[data-theme="dark"] .header-left h1,
+  :root[data-theme="dark"] .header-left p {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
   }
 
   .conn-dot {
@@ -206,6 +220,14 @@
     border-radius: var(--radius-lg);
     padding: 6px 8px;
     box-shadow: var(--shadow-glass);
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+
+  /* Viewing the live week gets an accent ring, so it is obvious at a glance
+     whether you are editing this week or browsing another one. */
+  .week-nav.is-current-week {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light), var(--shadow-glass);
   }
 
   .week-nav button {
@@ -250,15 +272,35 @@
     letter-spacing: 0.2px;
   }
 
+  /* Off the current week, "Today" becomes the obvious way back. */
+  .week-nav .today-btn.is-away {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(79, 109, 245, 0.28);
+  }
+  .week-nav .today-btn.is-away:hover { background: var(--accent-hover); color: #fff; }
+
   .week-tag {
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 2px 6px;
+    padding: 3px 7px;
     border-radius: 5px;
-    background: var(--accent-light);
-    color: var(--accent);
+    background: var(--chip-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  /* Fixed darker blue rather than var(--accent): white on #4f6df5 is only
+     4.34:1, which fails AA for text this small. #3b5bdb gives 5.67:1 and
+     works in both themes. */
+  .week-tag.current {
+    background: #3b5bdb;
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 1px 5px rgba(59, 91, 219, 0.45);
   }
 
   /* ── INSIGHTS ── */
@@ -278,16 +320,16 @@
     border-radius: 999px;
     font-size: 12px;
     font-weight: 600;
-    background: var(--glass-strong);
+    background: var(--chip-bg);
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-sm);
-    color: var(--text-secondary);
+    color: var(--text);
   }
-  .insight.warn { background: var(--warn-bg); border-color: transparent; color: var(--warn); }
-  .insight.danger { background: var(--danger-bg); border-color: transparent; color: var(--danger); }
-  .insight.ok { background: var(--ok-bg); border-color: transparent; color: var(--ok); }
+  .insight.warn   { background: var(--warn-bg);   border-color: rgba(180, 120, 10, 0.35); color: var(--warn); }
+  .insight.danger { background: var(--danger-bg); border-color: rgba(185, 28, 28, 0.32);  color: var(--danger); }
+  .insight.ok     { background: var(--ok-bg);     border-color: rgba(21, 128, 61, 0.32);  color: var(--ok); }
 
   .insight-setting {
     margin-left: auto;
@@ -2083,10 +2125,16 @@ function renderWeekLabel() {
   const dates = getWeekDates();
   const thisWeek = weekKey(getMonday(new Date())) === weekKey(currentMonday);
   const nextWeek = weekKey(addDays(getMonday(new Date()), 7)) === weekKey(currentMonday);
-  const tag = thisWeek ? '<span class="week-tag">This week</span>'
-            : nextWeek ? '<span class="week-tag">Next week</span>' : '';
+  const lastWeek = weekKey(addDays(getMonday(new Date()), -7)) === weekKey(currentMonday);
+  const tag = thisWeek ? '<span class="week-tag current">This week</span>'
+            : nextWeek ? '<span class="week-tag">Next week</span>'
+            : lastWeek ? '<span class="week-tag">Last week</span>' : '';
   $('weekLabelText').innerHTML =
     `${escHtml(formatDate(dates[0]))} – ${escHtml(formatDate(dates[4]))}, ${dates[0].getFullYear()} ${tag}`;
+
+  document.querySelector('.week-nav').classList.toggle('is-current-week', thisWeek);
+  $('todayBtn').classList.toggle('is-away', !thisWeek);
+  $('todayBtn').title = thisWeek ? 'You are on this week' : 'Jump back to this week (T)';
 }
 
 function renderTable() {
